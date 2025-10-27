@@ -1,0 +1,70 @@
+name: IdeationItems
+version: '${project.version}'
+main: io.github.cj_cate.ideationitems.Main
+api-version: '1.20'
+commands:
+  rename:
+    usage: /rename [new name]
+    description: Renames the item in your main hand.
+
+  gmc:
+    usage: /gmc
+    description: Sets your game mode to creative.
+    permission: ideation.util
+  gms:
+    usage: /gms
+    description: Sets your game mode to survival.
+    permission: ideation.util
+  gma:
+    usage: /gma
+    description: Sets your game mode to adventure.
+    permission: ideation.util
+  gmsp:
+    usage: /gmsp
+    description: Sets your game mode to spectator.
+    permission: ideation.util
+  gm:
+    usage: /gm [1|2|3|4]
+    description: Sets your game mode to creative, survival, adventure, or spectator respectively.
+    permission: ideation.util
+  p:
+    usage: /p [phrase]
+    description: used to artificially send packets for debugging. yay!
+    permission: ideation.debug
+  uuid:
+    usage: /uuid [string]
+    description: get uuid from the string, or for yourself with no input
+    permission: ideation.debug
+
+  mall:
+    usage: /mall
+    description: opens the mall to spawn in items
+    permission: ideation.mall
+
+  invr:
+    usage: /invr
+    description: refresh your inventory with updates and functional items!
+
+  checkItemMap:
+    usage: /checkItemMap
+    description: check the item map, for debugging purposes
+    permission: ideation.debug
+  getItemHeld:
+    usage: /getItemHeld
+    description: get details on the item you're holding, for debugging purposes
+    permission: ideation.debug
+  reload-ideas:
+    usage: /reload-ideas
+    description: reload config
+    permission: ideation.debug
+  hashcode:
+    usage: /hashcode (while holding a custom item)
+    description: used to check the hashcode for an items value, enabling resource pack creation
+
+  debug:
+    usage: /debug
+    description: implementation varies, depending on the weather
+    permission: ideation.debug
+  remove:
+    usage: /remove
+    description: remove disabled items from inventory
