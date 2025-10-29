@@ -46,15 +46,6 @@
                 </executions>
             </plugin>
 
-<!--    segment below found randomly but it puts the jar where I need it to be so I like it        -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.3.1</version>
-                <configuration>
-                    <outputDirectory>D:/mcs/test/plugins</outputDirectory>
-                </configuration>
-            </plugin>
 <!-- Old thing from jeff: https://blog.jeff-media.com/nms-use-mojang-mappings-for-your-spigot-plugins/ -->
 <!--    NMS thing from jeff:         -->
             <plugin>
