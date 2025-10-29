@@ -10,6 +10,7 @@ This is accomplished through a system I call Blueprints. When a Blueprint is cre
 - Retroactively update distributed items when they are updated in the codebase
 
 In order to implement these powerful things, slight drawbacks had to be made, mainly that durability has been effectively disabled. Because of this, I do not personally support any other plugins being used alongside this. Luckily, the entire plugin is FOSS and extremely configurable.
+
 Foreword
 ---
 This plugin is not like other plugins on the market; This is a codebase I have written that allows anyone to skip a the heavy lifting and get straight into putting a complex item into the game without worrying about the back end of plugin writing.
