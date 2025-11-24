@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>io.github.cj_cate.ideationitems</groupId>
+    <groupId>com.derivative.ideationitems</groupId>
     <artifactId>IdeationItems</artifactId>
     <version>Alpha-0.1.2</version>
     <packaging>jar</packaging>
@@ -13,7 +13,7 @@
 
     <properties>
         <java.version>1.21</java.version>
-        <remapped.version>1.21.10-R0.1-SNAPSHOT</remapped.version>
+        <remapped.version>1.20.6-R0.1-SNAPSHOT</remapped.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -46,15 +46,7 @@
                 </executions>
             </plugin>
 
-<!--    segment below found randomly but it puts the jar where I need it to be so I like it        -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.3.1</version>
-                <configuration>
-                    <outputDirectory>D:/mcs/test/plugins</outputDirectory>
-                </configuration>
-            </plugin>
+<!-- Old thing from jeff: https://blog.jeff-media.com/nms-use-mojang-mappings-for-your-spigot-plugins/ -->
 <!--    NMS thing from jeff:         -->
             <plugin>
                 <groupId>net.md-5</groupId>
@@ -117,17 +109,19 @@
 
 <!--    Advanced Slime Paper: https://github.com/InfernalSuite/AdvancedSlimePaper     -->
 <!--        Good information from this thread I made: https://discord.com/channels/741733106930810950/1233147021171359895 -->
-<!--        Learn about the mojand mappings: https://mineacademy.org/tutorial-24 -->
+<!--        https://mineacademy.org/tutorial-24 -->
     <!-- InfernalSuite RELEASE -->
         <repository>
             <id>is-releases</id>
             <url>https://repo.infernalsuite.com/repository/maven-releases/</url>
         </repository>
+
     <!-- InfernalSuite SNAPSHOT -->
         <repository>
             <id>is-snapshots</id>
             <url>https://repo.infernalsuite.com/repository/maven-snapshots/</url>
         </repository>
+
     <!-- From the ASP discord thread   -->
         <repository>
             <id>flow-nbt</id>
@@ -149,22 +143,16 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.21.10-R0.1-SNAPSHOT</version>
+            <version>1.20.6-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
-            <version>24.1.0</version>
-            <scope>compile</scope>
-        </dependency>
 
-        <!--    Advanced Slime Paper    -->
-<!--        <dependency>-->
-<!--            <groupId>com.infernalsuite.aswm</groupId>-->
-<!--            <artifactId>api</artifactId>-->
-<!--            <version>1.21.10-R0.1-SNAPSHOT</version>-->
-<!--            <scope>provided</scope>-->
-<!--        </dependency>-->
+<!--    Advanced Slime Paper    -->
+        <dependency>
+            <groupId>com.infernalsuite.aswm</groupId>
+            <artifactId>api</artifactId>
+            <version>1.20.6-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 </project>
