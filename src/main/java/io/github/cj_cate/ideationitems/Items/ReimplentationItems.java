@@ -1,32 +1,17 @@
 package io.github.cj_cate.ideationitems.Items;
 
-import io.github.cj_cate.ideationitems.ItemMaps;
 import io.github.cj_cate.ideationitems.Items.Backend.Blueprint;
 import io.github.cj_cate.ideationitems.Items.Backend.Categories;
-import io.github.cj_cate.ideationitems.Items.Backend.InteractEffectClasses.InteractEffect_EntityDamageByEntityEvent;
 import io.github.cj_cate.ideationitems.Items.Backend.ItemClass;
 import io.github.cj_cate.ideationitems.Items.Backend.RecipeStuffs.MaterialCarrier;
 import io.github.cj_cate.ideationitems.Items.Backend.RecipeStuffs.RecipeHolder;
 import io.github.cj_cate.ideationitems.Items.Backend.RecipeStuffs.RecipeType;
-import io.github.cj_cate.ideationitems.Utils.ItemUtil;
-import org.apache.commons.lang.WordUtils;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.inventory.EquipmentSlotGroup;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.RecipeChoice;
-import org.bukkit.inventory.meta.ArmorMeta;
-import org.bukkit.inventory.meta.trim.ArmorTrim;
-import org.bukkit.inventory.meta.trim.TrimMaterial;
-import org.bukkit.inventory.meta.trim.TrimPattern;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +35,7 @@ public class ReimplentationItems extends ItemClass implements Listener
     // only class where it is used but this is way more convenient
     public static ArrayList<Material> markToRemove = new ArrayList<>(List.of(
             Material.POWERED_RAIL, // If you simply want to remove an item
-            Material.CHAIN
+            Material.IRON_CHAIN
     ));
 
     public ReimplentationItems() {
@@ -65,7 +50,7 @@ public class ReimplentationItems extends ItemClass implements Listener
     }
 
     public Blueprint makeVanillaChain() {
-        return new Blueprint(new ItemStack(Material.CHAIN, 3), "vanilla_chain", Categories.VANILLA,
+        return new Blueprint(new ItemStack(Material.IRON_CHAIN, 3), "vanilla_chain", Categories.VANILLA,
             new RecipeHolder(
                 RecipeType.SHAPED_RECIPE,
                 new String[]{

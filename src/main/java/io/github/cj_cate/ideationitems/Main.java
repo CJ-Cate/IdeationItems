@@ -1,7 +1,10 @@
 package io.github.cj_cate.ideationitems;
 
-import io.github.cj_cate.ideationitems.Commands.*;
-//import io.github.cj_cate.ideationitems.Events.CustomDisabledItemEvents;
+import io.github.cj_cate.ideationitems.Commands.DebugCommands;
+import io.github.cj_cate.ideationitems.Commands.HashcodeCommand;
+import io.github.cj_cate.ideationitems.Commands.MallCommand;
+import io.github.cj_cate.ideationitems.Commands.RemoveDisabledItemsCommand;
+import io.github.cj_cate.ideationitems.Commands.UtilCommands;
 import io.github.cj_cate.ideationitems.Events.DisableVanillaEvents;
 import io.github.cj_cate.ideationitems.Events.InventoryRefresh;
 import io.github.cj_cate.ideationitems.Items.Backend.Blueprint;

@@ -2,7 +2,7 @@ package io.github.cj_cate.ideationitems.CustomMobs;
 
 import net.minecraft.world.entity.Entity;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_20_R4.CraftWorld;
+import org.bukkit.craftbukkit.v1_21_R6.CraftWorld;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
 import java.util.HashMap;

@@ -10,6 +10,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
+import org.bukkit.block.Biome;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -23,6 +24,8 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.Random;
+
+import static org.bukkit.block.Biome.*;
 
 
 public class FishingReworkExample extends ItemClass implements Listener
@@ -161,43 +164,34 @@ public class FishingReworkExample extends ItemClass implements Listener
         WeightedRandomBag<ItemStack> bag = new WeightedRandomBag<>();
         Player p = e.getPlayer();
 
-        switch(p.getWorld().getBiome(p.getLocation())) {
-            case JUNGLE, BAMBOO_JUNGLE, SPARSE_JUNGLE -> {
+        Biome biome = p.getWorld().getBiome(p.getLocation());
+        if (biome.equals(JUNGLE) || biome.equals(BAMBOO_JUNGLE) || biome.equals(SPARSE_JUNGLE)) {
+            bag.add(new ItemStack(Material.TROPICAL_FISH), 3);
+            bag.add(new ItemStack(Material.PUFFERFISH), 0.5);
 
-                bag.add(new ItemStack(Material.TROPICAL_FISH), 3);
-                bag.add(new ItemStack(Material.PUFFERFISH), 0.5);
+            bag.add(new ItemStack(Material.JUNGLE_SAPLING), 0.3);
+            bag.add(new ItemStack(Material.VINE, rand.nextInt(1, 3)), 0.5);
+            bag.add(new ItemStack(Material.REDSTONE), 1);
+            bag.add(new ItemStack(Material.BAMBOO_SAPLING), 1);
+        } else if (biome.equals(TAIGA) || biome.equals(SNOWY_TAIGA) || biome.equals(OLD_GROWTH_PINE_TAIGA) || biome.equals(OLD_GROWTH_SPRUCE_TAIGA) || biome.equals(FROZEN_RIVER)) {
+            bag.add(new ItemStack(Material.SALMON), 3);
+            bag.add(new ItemStack(Material.COD), 1);
 
-                bag.add(new ItemStack(Material.JUNGLE_SAPLING), 0.3);
-                bag.add(new ItemStack(Material.VINE, rand.nextInt(1,3)), 0.5);
-                bag.add(new ItemStack(Material.REDSTONE), 1);
-                bag.add(new ItemStack(Material.BAMBOO_SAPLING), 1);
-            }
-            case TAIGA, SNOWY_TAIGA, OLD_GROWTH_PINE_TAIGA, OLD_GROWTH_SPRUCE_TAIGA, FROZEN_RIVER -> {
-
-                bag.add(new ItemStack(Material.SALMON), 3);
-                bag.add(new ItemStack(Material.COD), 1);
-
-                bag.add(new ItemStack(Material.SNOWBALL), 0.5);
-                bag.add(new ItemStack(Material.SWEET_BERRIES), 1);
-                bag.add(new ItemStack(Material.SPRUCE_SAPLING), 1);
-                bag.add(new ItemStack(Material.ICE, rand.nextInt(2,5)), 1);
-            }
-            case DESERT, SAVANNA, SAVANNA_PLATEAU, WINDSWEPT_SAVANNA,
-                 BADLANDS, ERODED_BADLANDS, WOODED_BADLANDS -> {
-
-                bag.add(new ItemStack(Material.COD), 3);
-                bag.add(new ItemStack(Material.ACACIA_SAPLING), 0.5);
-                bag.add(new ItemStack(Material.GOLD_NUGGET, rand.nextInt(3,7)), 1);
-                bag.add(new ItemStack(Material.DEAD_BUSH), 0.5);
-                bag.add(new ItemStack(Material.BONE_MEAL, rand.nextInt(1,2)), 0.5);
-            }
-            default -> {
-                bag.add(new ItemStack(Material.COD), 3);
-                bag.add(new ItemStack(Material.SALMON), 2);
-                bag.add(new ItemStack(Material.PUFFERFISH), 1);
-                bag.add(new ItemStack(Material.TROPICAL_FISH), 0.2);
-            }
-
+            bag.add(new ItemStack(Material.SNOWBALL), 0.5);
+            bag.add(new ItemStack(Material.SWEET_BERRIES), 1);
+            bag.add(new ItemStack(Material.SPRUCE_SAPLING), 1);
+            bag.add(new ItemStack(Material.ICE, rand.nextInt(2, 5)), 1);
+        } else if (biome.equals(DESERT) || biome.equals(SAVANNA) || biome.equals(SAVANNA_PLATEAU) || biome.equals(WINDSWEPT_SAVANNA) || biome.equals(BADLANDS) || biome.equals(ERODED_BADLANDS) || biome.equals(WOODED_BADLANDS)) {
+            bag.add(new ItemStack(Material.COD), 3);
+            bag.add(new ItemStack(Material.ACACIA_SAPLING), 0.5);
+            bag.add(new ItemStack(Material.GOLD_NUGGET, rand.nextInt(3, 7)), 1);
+            bag.add(new ItemStack(Material.DEAD_BUSH), 0.5);
+            bag.add(new ItemStack(Material.BONE_MEAL, rand.nextInt(1, 2)), 0.5);
+        } else {
+            bag.add(new ItemStack(Material.COD), 3);
+            bag.add(new ItemStack(Material.SALMON), 2);
+            bag.add(new ItemStack(Material.PUFFERFISH), 1);
+            bag.add(new ItemStack(Material.TROPICAL_FISH), 0.2);
         }
 
         return bag;
@@ -237,10 +231,9 @@ public class FishingReworkExample extends ItemClass implements Listener
         bag.add(new ItemStack(Material.ROTTEN_FLESH), 1);
         bag.add(new ItemStack(Material.SPIDER_EYE, r), 1);
 
-        switch(p.getWorld().getBiome(p.getLocation())) {
-            case JUNGLE, BAMBOO_JUNGLE, SPARSE_JUNGLE -> {
-                bag.add(new ItemStack(Material.COCOA_BEANS, rand.nextInt(1,5)), 1);
-            }
+        Biome biome = p.getWorld().getBiome(p.getLocation());
+        if (biome.equals(JUNGLE) || biome.equals(BAMBOO_JUNGLE) || biome.equals(SPARSE_JUNGLE)) {
+            bag.add(new ItemStack(Material.COCOA_BEANS, rand.nextInt(1, 5)), 1);
         }
 
         return bag;

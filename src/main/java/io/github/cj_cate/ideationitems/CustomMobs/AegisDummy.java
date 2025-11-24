@@ -10,7 +10,7 @@ import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.phys.Vec3;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_20_R4.CraftWorld;
+import org.bukkit.craftbukkit.v1_21_R6.CraftWorld;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
@@ -46,10 +46,6 @@ public class AegisDummy extends IronGolem implements BaseMob {
         return SoundEvents.PIG_DEATH;
     }
 
-    @Override
-    protected boolean shouldDropLoot() {
-        return false;
-    }
 
     @Override
     public void move(MoverType enummovetype, Vec3 vec3d) { }
