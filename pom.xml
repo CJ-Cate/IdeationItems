@@ -46,8 +46,7 @@
                 </executions>
             </plugin>
 
-<!-- Old thing from jeff: https://blog.jeff-media.com/nms-use-mojang-mappings-for-your-spigot-plugins/ -->
-<!--    NMS thing from jeff:         -->
+<!--    mfnalex plugin to re-map the mojang mappings to obfuscated:         -->
             <plugin>
                 <groupId>net.md-5</groupId>
                 <artifactId>specialsource-maven-plugin</artifactId>
@@ -107,26 +106,6 @@
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
 
-<!--    Advanced Slime Paper: https://github.com/InfernalSuite/AdvancedSlimePaper     -->
-<!--        Good information from this thread I made: https://discord.com/channels/741733106930810950/1233147021171359895 -->
-<!--        https://mineacademy.org/tutorial-24 -->
-    <!-- InfernalSuite RELEASE -->
-        <repository>
-            <id>is-releases</id>
-            <url>https://repo.infernalsuite.com/repository/maven-releases/</url>
-        </repository>
-    <!-- InfernalSuite SNAPSHOT -->
-        <repository>
-            <id>is-snapshots</id>
-            <url>https://repo.infernalsuite.com/repository/maven-snapshots/</url>
-        </repository>
-    <!-- From the ASP discord thread   -->
-        <repository>
-            <id>flow-nbt</id>
-            <url>https://repo.rapture.pw/repository/maven-releases/</url>
-        </repository>
-    </repositories>
-
     <dependencies>
 <!--    NMS (Keep ABOVE spigot)   -->
         <dependency>
@@ -144,19 +123,13 @@
             <version>1.21.10-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+             
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
             <version>24.1.0</version>
             <scope>compile</scope>
         </dependency>
-
-        <!--    Advanced Slime Paper - Only needed when using their plugin, not for stock paper.   -->
-<!--        <dependency>-->
-<!--            <groupId>com.infernalsuite.aswm</groupId>-->
-<!--            <artifactId>api</artifactId>-->
-<!--            <version>1.21.10-R0.1-SNAPSHOT</version>-->
-<!--            <scope>provided</scope>-->
-<!--        </dependency>-->
+             
     </dependencies>
 </project>
