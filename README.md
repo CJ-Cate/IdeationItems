@@ -67,7 +67,9 @@ For ease of development, I would recommend a maven plugin like as follows to aut
     <groupId>org.apache.maven.plugins</groupId>  
     <artifactId>maven-jar-plugin</artifactId>  
     <version>3.3.0</version>  
-	    <configuration>        <outputDirectory>/your/directory/server/plugins</outputDirectory></configuration>  
+	    <configuration>
+			<outputDirectory>/your/directory/server/plugins</outputDirectory>
+		</configuration>  
 </plugin>
 ```
 
