@@ -61,6 +61,16 @@ Installation
 ### Building the plugin
 If you need help setting up your build dependencies, I recommend this [archived post by mfnalex](https://web.archive.org/web/20250520100129/https://blog.jeff-media.com/nms-use-mojang-mappings-for-your-spigot-plugins/). IntelliJ should automatically set up the Spigot build, but you need to manually set anything for NMS. If its not working I recommend just removing any relevant NMS code because most things can work without it. For convenience, I include [my own pom.xml](https://github.com/CJ-Cate/IdeationItems/blob/main/pom.xml) you can use to build with maven. With a little luck, this should work out-of-the-box for version `1.21.10`. 
 
+For ease of development, I would recommend a maven plugin like as follows to automatically place the built plugin in a proper location so that you only have to reload your server:
+```xml
+<plugin>  
+    <groupId>org.apache.maven.plugins</groupId>  
+    <artifactId>maven-jar-plugin</artifactId>  
+    <version>3.3.0</version>  
+	    <configuration>        <outputDirectory>/your/directory/server/plugins</outputDirectory></configuration>  
+</plugin>
+```
+
 Remember to use some sort of re-obfuscation when you are shipping your plugin. You are *technically legally required* to re-obfuscate your build away from mojang's mappings when you build your plugin with intent to distribute. I am not a lawyer, but I recommend using the following plugin (written by mfnalex) in your `pom.xml`:
 ```xml
 <plugin>  
