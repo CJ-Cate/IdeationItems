@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.derivative.ideationitems</groupId>
+    <groupId>io.github.cj_cate.ideationitems</groupId>
     <artifactId>IdeationItems</artifactId>
     <version>Alpha-0.1.2</version>
     <packaging>jar</packaging>
@@ -13,7 +13,7 @@
 
     <properties>
         <java.version>1.21</java.version>
-        <remapped.version>1.20.6-R0.1-SNAPSHOT</remapped.version>
+        <remapped.version>1.21.10-R0.1-SNAPSHOT</remapped.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -115,13 +115,11 @@
             <id>is-releases</id>
             <url>https://repo.infernalsuite.com/repository/maven-releases/</url>
         </repository>
-
     <!-- InfernalSuite SNAPSHOT -->
         <repository>
             <id>is-snapshots</id>
             <url>https://repo.infernalsuite.com/repository/maven-snapshots/</url>
         </repository>
-
     <!-- From the ASP discord thread   -->
         <repository>
             <id>flow-nbt</id>
@@ -143,16 +141,22 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.20.6-R0.1-SNAPSHOT</version>
+            <version>1.21.10-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>24.1.0</version>
+            <scope>compile</scope>
         </dependency>
 
-<!--    Advanced Slime Paper    -->
-        <dependency>
-            <groupId>com.infernalsuite.aswm</groupId>
-            <artifactId>api</artifactId>
-            <version>1.20.6-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
+        <!--    Advanced Slime Paper - Only needed when using their plugin, not for stock paper.   -->
+<!--        <dependency>-->
+<!--            <groupId>com.infernalsuite.aswm</groupId>-->
+<!--            <artifactId>api</artifactId>-->
+<!--            <version>1.21.10-R0.1-SNAPSHOT</version>-->
+<!--            <scope>provided</scope>-->
+<!--        </dependency>-->
     </dependencies>
 </project>
