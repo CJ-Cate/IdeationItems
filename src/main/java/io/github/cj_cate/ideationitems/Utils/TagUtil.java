@@ -20,7 +20,8 @@ public class TagUtil
         UNPLACEABLE("unplaceable"),
         ENCHANTABLE("enchantable"),
         ENCHANTED("enchanted"),
-        CUSTOM("custom");
+        CUSTOM("custom"),
+        VANILLA("vanilla");
 
         private final String enumTag;
 
@@ -46,10 +47,16 @@ public class TagUtil
 
     public static String getCustomValue(ItemStack item, String key)
     {
-        if(item == null || item.getItemMeta() == null || !hasCustomValue(item)) {
+        if(item == null || item.getItemMeta() == null) {
             return "null"; // String so .equals() can safely be applied
         }
         return item.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(Main.getMain(), key), PersistentDataType.STRING);
+    }
+
+    public static boolean hasVanillaValue(ItemStack item)
+    {
+        if(item == null || item.getItemMeta() == null) return false;
+        return item.getItemMeta().getPersistentDataContainer().has(new NamespacedKey(Main.getMain(), Tag.VANILLA.getTag()), PersistentDataType.STRING);
     }
 
     public static boolean hasCustomValue(ItemStack item)

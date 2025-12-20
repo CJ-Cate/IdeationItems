@@ -84,8 +84,8 @@ public class RecipeHolder
     public RecipeType getRecipeType() {
         return recipeType;
     }
-    public RecipeChoice getSource() {
-        return source.getRecipeChoice();
+    public MaterialCarrier getSource() {
+        return this.source;
     }
     public String[] getRecipeArray() {
         return recipeArray;

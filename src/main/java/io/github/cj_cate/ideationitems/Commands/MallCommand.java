@@ -3,6 +3,7 @@ package io.github.cj_cate.ideationitems.Commands;
 import io.github.cj_cate.ideationitems.ItemMaps;
 import io.github.cj_cate.ideationitems.Items.Backend.Blueprint;
 import io.github.cj_cate.ideationitems.Items.Backend.Categories;
+import io.github.cj_cate.ideationitems.Main;
 import io.github.cj_cate.ideationitems.Utils.GuiUtil;
 import io.github.cj_cate.ideationitems.Utils.ItemUtil;
 import org.bukkit.Material;
@@ -27,11 +28,13 @@ public class MallCommand implements Listener, CommandExecutor
     private static final String mallName = "Mall";
 //    public String getMallName() { return mallName; }
     private final int slots_per_page = 45;
-    private int page = 0;
+    private int page = 0; //TODO: Test this in multiplayer to see if change this to a map of [player:page]
     private final int page_max = (int) Math.ceil((double) ItemMaps.getBlueprints().size() / slots_per_page);
     private final ItemStack air = new ItemStack(Material.AIR);
     private final Blueprint[][] book = new Blueprint[page_max][slots_per_page];
-    private final Blueprint bair = new Blueprint(ItemUtil.makeItem(Material.LIGHT_GRAY_STAINED_GLASS_PANE, ""), "air", Categories.SECRET, null);
+    // It gets kinda angry if we just put air in it, this is the workaround. We reset it to air later.
+    private final Blueprint bair = new Blueprint(ItemUtil.makeItem(Material.LIGHT_GRAY_STAINED_GLASS_PANE, ""),
+                                            "air", Categories.SECRET, null);
 
 
     public MallCommand()
@@ -53,14 +56,12 @@ public class MallCommand implements Listener, CommandExecutor
             index = slots_per_page*i + j;
         }
 
+        // Fill the last page with bair. We only have to check the last page because every other page is full.
         for (int k = 0; k < slots_per_page; k++) {
             if(book[page_max - 1][k] == null) {
                 book[page_max - 1][k] = bair;
             }
         }
-
-
-
     }
 
     @Override
@@ -78,10 +79,11 @@ public class MallCommand implements Listener, CommandExecutor
         return true;
     }
 
+    // Handles page turning in the mall
     @EventHandler
     public void onMallInventoryClickPageTurn(InventoryClickEvent e)
     {
-        //TODO: put a check for handle here
+        if(!e.getView().getTitle().equalsIgnoreCase(mallName)) return;
         if(e.getCurrentItem() == null || e.getCurrentItem().getItemMeta() == null) return;
         // turn right
         if(e.getCurrentItem().getItemMeta().getDisplayName().contains("Turn Right")) {
@@ -96,16 +98,59 @@ public class MallCommand implements Listener, CommandExecutor
         }
     }
 
+    // Handles when an actual item is clicked.
+    // If left click -> see the recipe
+    // If shift+left click + perms -> get the item
+    // If middle click + perms -> get a stack of the item
+    @EventHandler
+    public void onMallInventoryClickItem(InventoryClickEvent e)
+    {
+        if(!e.getView().getTitle().equalsIgnoreCase(mallName)) return;
+        if(e.getCurrentItem() == null || e.getCurrentItem().getItemMeta() == null) return;
+
+        // 44 is last slot of the 5th row in a big chest, e.g. the last slot before the 'info row'
+        if(e.getSlot() > 44) return;
+
+        e.setCancelled(true);
+
+        switch(e.getClick()) {
+            case LEFT -> {
+                GetRecipeCommand.openRecipeMenu((Player) e.getWhoClicked(), e.getCurrentItem());
+            }
+            case SHIFT_LEFT -> {
+                ItemStack item = e.getCurrentItem();
+                if(e.getCurrentItem().getAmount() != item.getAmount()) {
+                    Main.debug("Different amounts, changing! Report this");
+                    Main.debug("Commands/MallCommand/onMallInventoryClickItem");
+                    item.setAmount(e.getCurrentItem().getAmount()); // could be a non-one amount
+                }
+                e.getWhoClicked().getInventory().addItem(item);
+            }
+            case MIDDLE ->  {
+                ItemStack item = e.getCurrentItem();
+                item.setAmount(item.getMaxStackSize());
+                e.getWhoClicked().getInventory().addItem(item);
+            }
+
+        }
+
+    }
+
+
     private void refreshMall(Inventory inv) {
         for (int i = 0; i < slots_per_page; i++) {
-            inv.setItem(i, book[page][i].item());
+            if(book[page][i].equals(bair)) {
+                inv.setItem(i, air);
+            } else {
+                inv.setItem(i, book[page][i].item());
+            }
         }
     }
 
-    @EventHandler
-    public void closecustominv(InventoryCloseEvent e)
-    {
-        //shutdown logic?
-        //page = 0;
-    }
+//    @EventHandler
+//    public void closecustominv(InventoryCloseEvent e)
+//    {
+//        //shutdown logic?
+//        //page = 0;
+//    }
 }
