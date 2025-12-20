@@ -118,42 +118,42 @@ public class ExampleItems extends ItemClass
 
     public Blueprint getRotor() {
         ItemStack item = ItemUtil.makeItem(Material.IRON_SHOVEL, ChatColor.GRAY + "" + ChatColor.BOLD + "Boat Rotor",
-                new ArrayList<>(Arrays.asList(
-                        "Hold this in your off-hand while",
-                        "in a boat to nyooommmm"
-                )));
+            new ArrayList<>(Arrays.asList(
+                "Hold this in your off-hand while",
+                "in a boat to nyooommmm"
+            )));
 
         return new Blueprint(item, "rotor", Categories.MISC, new RecipeHolder(
-                RecipeType.SHAPED_RECIPE,
-                new String[]{
-                        "iri",
-                        "iri",
-                        " s ",
-                },
-                new MaterialCarrier('i', Material.IRON_INGOT),
-                new MaterialCarrier('r', Material.REDSTONE_BLOCK),
-                new MaterialCarrier('s', Material.IRON_SHOVEL)),
+            RecipeType.SHAPED_RECIPE,
+            new String[]{
+                "iri",
+                "iri",
+                " s ",
+            },
+            new MaterialCarrier('i', Material.IRON_INGOT),
+            new MaterialCarrier('r', Material.REDSTONE_BLOCK),
+            new MaterialCarrier('s', Material.IRON_SHOVEL)),
 
-                new InteractEffect_PlayerMoveEvent(e -> {
-                    if(e.getPlayer().getVehicle() == null) return;
+            new InteractEffect_PlayerMoveEvent(e -> {
+                if(e.getPlayer().getVehicle() == null) return;
 
-                    // General boat name since the addition of boat types
-                    if(e.getPlayer().getVehicle().getType().getName().contains("BOAT"))
+                // General boat name since the addition of boat types
+                if(e.getPlayer().getVehicle().getType().getName().contains("BOAT"))
+                {
+                    Boat boat = (Boat) e.getPlayer().getVehicle();
+                    if(!boat.isOnGround() && e.getPlayer().getInventory().getItemInOffHand().equals(item))
                     {
-                        Boat boat = (Boat) e.getPlayer().getVehicle();
-                        if(!boat.isOnGround() && e.getPlayer().getInventory().getItemInOffHand().equals(item))
-                        {
-                            // (hacky) Math to modify the character velocity in the direction of x,z
-                            Vector v = e.getPlayer().getVelocity();
-                            double xz = 20;
-                            double x = v.getX() * xz;
-                            double y = e.getPlayer().getVehicle().getVelocity().getY();
-                            double z = v.getZ() * xz;
+                        // (hacky) Math to modify the character velocity in the direction of x,z
+                        Vector v = e.getPlayer().getVelocity();
+                        double xz = 20;
+                        double x = v.getX() * xz;
+                        double y = e.getPlayer().getVehicle().getVelocity().getY();
+                        double z = v.getZ() * xz;
 
-                            e.getPlayer().getVehicle().setVelocity(new Vector(x,y,z));
-                        }
+                        e.getPlayer().getVehicle().setVelocity(new Vector(x,y,z));
                     }
-                }));
+                }
+            }));
     }
 
 
