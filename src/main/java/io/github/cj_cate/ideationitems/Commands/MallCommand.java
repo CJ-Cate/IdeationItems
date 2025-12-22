@@ -20,11 +20,16 @@ import org.bukkit.inventory.ItemStack;
 
 import static io.github.cj_cate.ideationitems.Utils.GuiUtil.createInventory;
 
+/**
+ * The mall command serves two functions:
+ *   1. Give the playerbase the ability to view all of the recipes that you have implemented
+ *   2. Let admins cheat in items
+ *
+ *  If there is an item with no recipe, it
+ */
+
 public class MallCommand implements Listener, CommandExecutor
 {
-    /**
-     * This command was the first big GUI implemented. It is used to cheat in items in an interactive way.
-     */
     private static final String mallName = "Mall";
 //    public String getMallName() { return mallName; }
     private final int slots_per_page = 45;
@@ -39,7 +44,7 @@ public class MallCommand implements Listener, CommandExecutor
 
     public MallCommand()
     {
-        // Initialise the contents of book
+        // Initialize the contents of book
         // each page (i) should get up to slots_per_page (45) elements
         // every time we get to the 45th element, increment i and reset j
         int i = 0; // page

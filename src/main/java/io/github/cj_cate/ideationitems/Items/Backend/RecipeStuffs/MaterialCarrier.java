@@ -7,7 +7,10 @@ import org.bukkit.inventory.RecipeChoice;
 
 import java.util.Objects;
 
-// Material is the material or itemstack passed into the recipe as a character
+/**
+ * Material is the material or itemstack passed into the recipe as a character.
+ * This lets you pass in pretty much whatever you want as a material and have it be handled
+ **/
 public class MaterialCarrier {
     private char key = 0;
     private RecipeChoice recipeChoice = null;

@@ -6,12 +6,22 @@ import org.bukkit.inventory.RecipeChoice;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * The RecipeHolder is a piece of the blueprint that holds all the recipe information for an item.
+ * Because there are many different types of recipes, most of which with non-overlapping elements, we set a RecipeType
+ *   and only reference the pieces used by that specific RecipeType.
+ *
+ * I have made the intentional design choice to separate default furnace/smoker/blast-furnace recipes, so that recipes
+ *   added to a smoker are not automatically furnace cookable. This lets you add recipes for food that needs to be
+ *   cooked in a "food only environment." It's sortof a gimmick, but it really encourages fun in-game behavior of
+ *   having cooking areas and smelting areas.
+ */
 public class RecipeHolder
 {
-    // Enum for recipe type. Used for the switch in the blueprint to determine the thing idk just go look at it
+    // Enum for recipe type. Used for the switch in the blueprint to implement the proper recipe.
     private RecipeType recipeType;
 
-    // The base item for when it's needed. source is kindof a funky name but here we are
+    // The base item for when it's needed. For example, when you cook a steak the raw beef is the 'source'.
     private MaterialCarrier source;
 
     // For shaped recipes (and some shapeless)
@@ -37,7 +47,7 @@ public class RecipeHolder
         materialCarrierArrayList.addAll(Arrays.asList(materialCarriers));
     }
 
-    // Shaped Recipes
+    // Shaped Recipes (with amounts)
     public RecipeHolder(RecipeType recipeType_shapedRecipeSize, String[] recipeArray, int[] amounts, MaterialCarrier... materialCarriers) {
         this.recipeType = recipeType_shapedRecipeSize;
         this.recipeArray = recipeArray;
@@ -45,7 +55,6 @@ public class RecipeHolder
 
         materialCarrierArrayList.addAll(Arrays.asList(materialCarriers));
     }
-
 
     // Smithing recipes (apparently broken, fault of spigot. Will test.)
     public RecipeHolder(RecipeType recipeType_smithingRecipe, MaterialCarrier template, MaterialCarrier base, MaterialCarrier addition) {

@@ -1,24 +1,17 @@
 package io.github.cj_cate.ideationitems.Items.Backend;
 
+import io.github.cj_cate.ideationitems.Events.DisableVanillaEvents;
 import io.github.cj_cate.ideationitems.Events.InventoryRefresh;
 import io.github.cj_cate.ideationitems.ItemMaps;
 import io.github.cj_cate.ideationitems.Items.Backend.InteractEffectClasses.InteractEffectHolder;
 import io.github.cj_cate.ideationitems.Items.Backend.RecipeStuffs.MaterialCarrier;
 import io.github.cj_cate.ideationitems.Items.Backend.RecipeStuffs.RecipeHolder;
 import io.github.cj_cate.ideationitems.Main;
+import io.github.cj_cate.ideationitems.Utils.TagUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.Listener;
-import org.bukkit.inventory.BlastingRecipe;
-import org.bukkit.inventory.CampfireRecipe;
-import org.bukkit.inventory.FurnaceRecipe;
-import org.bukkit.inventory.ItemFlag;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.ShapedRecipe;
-import org.bukkit.inventory.ShapelessRecipe;
-import org.bukkit.inventory.SmithingTransformRecipe;
-import org.bukkit.inventory.SmokingRecipe;
-import org.bukkit.inventory.StonecuttingRecipe;
+import org.bukkit.inventory.*;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -29,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * This record is used to store an ItemStack and its corresponding Key that will be used in the
@@ -45,31 +37,23 @@ import java.util.UUID;
 @SuppressWarnings("varargs")
 public record Blueprint(ItemStack item, String value, Categories category, RecipeHolder recipe, InteractEffectHolder... consumers)
 {
-    @SafeVarargs
     public Blueprint
     {
         ItemMeta m = item.getItemMeta();
 
-        m.setUnbreakable(true);
-        m.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
-        m.setCustomModelData(Math.abs(value.hashCode())); // has to be abs because custommodeldata cannot be set to negative values
-
-        // if the value is null, then its an item thats retaining vanilla functionality. skip the tagging and just give it something arbitrary and unique
-        if(value != null) {
-            m.getPersistentDataContainer().set(new NamespacedKey(Main.getMain(), "custom"), PersistentDataType.STRING, value);
-        } else {
-            // currently, this should never happen.
-            Main.log("Problemo! A value is null");
-            // if no random uuid then sometimes there is overlap between existing vanilla recipes
-            // this happens if the registering items reflection code in onEnable runs before the ReimplementationItems constructor
-            // to make life easy, just run this.
-            value = item.getType().name() + UUID.randomUUID();
+        if(DisableVanillaEvents.durableItems.contains(item.getType())){
+            m.setUnbreakable(true);
+            m.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
         }
 
         if(category != Categories.VANILLA) {
-            item.setItemMeta(m);
+            m.setCustomModelData(Math.abs(value.hashCode())); // has to be abs because custommodeldata cannot be set to negative values
+            m.getPersistentDataContainer().set(new NamespacedKey(Main.getMain(), TagUtil.Tag.CUSTOM.getTag()), PersistentDataType.STRING, value);
+        } else {
+            m.getPersistentDataContainer().set(new NamespacedKey(Main.getMain(), TagUtil.Tag.VANILLA.getTag()), PersistentDataType.STRING, value);
         }
 
+        item.setItemMeta(m);
 
     } // constructor ends here
 
@@ -155,11 +139,11 @@ public record Blueprint(ItemStack item, String value, Categories category, Recip
             case SMITHING_RECIPE -> Bukkit.addRecipe(new SmithingTransformRecipe(key, item, recipe.getTemplate(),recipe.getBase(), recipe.getAddition()));
 
 
-            case STONECUTTING_RECIPE -> Bukkit.addRecipe(new StonecuttingRecipe(key, item, recipe.getSource()));
-            case FURNACE_RECIPE -> Bukkit.addRecipe(     new FurnaceRecipe(     key, item, recipe.getSource(), 0, recipe.getCookingTime()));
-            case BLASTING_RECIPE -> Bukkit.addRecipe(    new BlastingRecipe(    key, item, recipe.getSource(), 0, recipe.getCookingTime()));
-            case SMOKING_RECIPE -> Bukkit.addRecipe(     new SmokingRecipe(     key, item, recipe.getSource(), 0, recipe.getCookingTime()));
-            case CAMPFIRE_RECIPE -> Bukkit.addRecipe(    new CampfireRecipe(    key, item, recipe.getSource(), 0, recipe.getCookingTime()));
+            case STONECUTTING_RECIPE -> Bukkit.addRecipe(new StonecuttingRecipe(key, item, recipe.getSource().getRecipeChoice()));
+            case FURNACE_RECIPE -> Bukkit.addRecipe(     new FurnaceRecipe(     key, item, recipe.getSource().getRecipeChoice(), 0, recipe.getCookingTime()));
+            case BLASTING_RECIPE -> Bukkit.addRecipe(    new BlastingRecipe(    key, item, recipe.getSource().getRecipeChoice(), 0, recipe.getCookingTime()));
+            case SMOKING_RECIPE -> Bukkit.addRecipe(     new SmokingRecipe(     key, item, recipe.getSource().getRecipeChoice(), 0, recipe.getCookingTime()));
+            case CAMPFIRE_RECIPE -> Bukkit.addRecipe(    new CampfireRecipe(    key, item, recipe.getSource().getRecipeChoice(), 0, recipe.getCookingTime()));
 
             default -> throw new IllegalArgumentException("(custom) there is an incorrect recipe type enum thingy!");
         }
