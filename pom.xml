@@ -6,7 +6,7 @@
 
     <groupId>io.github.cj_cate.ideationitems</groupId>
     <artifactId>IdeationItems</artifactId>
-    <version>Simple-Alpha-0.1.2</version>
+    <version>Core</version>
     <packaging>jar</packaging>
 
     <name>IdeationItems</name>

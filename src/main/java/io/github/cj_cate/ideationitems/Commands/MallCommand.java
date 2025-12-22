@@ -129,11 +129,13 @@ public class MallCommand implements Listener, CommandExecutor
                     Main.debug("Commands/MallCommand/onMallInventoryClickItem");
                     item.setAmount(e.getCurrentItem().getAmount()); // could be a non-one amount
                 }
+                e.getWhoClicked().sendMessage("IdeationItems/Admin: Created item: " + item.getItemMeta().getDisplayName() + " x" + item.getAmount());
                 e.getWhoClicked().getInventory().addItem(item);
             }
             case MIDDLE ->  {
                 ItemStack item = e.getCurrentItem();
                 item.setAmount(item.getMaxStackSize());
+                e.getWhoClicked().sendMessage("IdeationItems/Admin: Created item: " + item.getItemMeta().getDisplayName() + " x" + item.getAmount());
                 e.getWhoClicked().getInventory().addItem(item);
             }
 

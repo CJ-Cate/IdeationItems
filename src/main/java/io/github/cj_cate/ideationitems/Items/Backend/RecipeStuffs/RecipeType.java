@@ -13,7 +13,8 @@ public enum RecipeType {
     SMITHING_RECIPE,
     SMOKING_RECIPE,
     CAMPFIRE_RECIPE,
-    EXPLAIN_RECIPE,; // RecipeType that has no in-game recipe, but has info when you click from /mall
+    //EXPLAIN_RECIPE, // RecipeType that has no in-game recipe, but has info when you click from /mall
+    ;
 //    ComplexRecipe,
 //    CookingRecipe,
 //    MerchantRecipe,

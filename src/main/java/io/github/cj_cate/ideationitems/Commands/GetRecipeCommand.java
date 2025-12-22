@@ -8,6 +8,7 @@ import io.github.cj_cate.ideationitems.Main;
 import io.github.cj_cate.ideationitems.Utils.GuiUtil;
 import io.github.cj_cate.ideationitems.Utils.ItemUtil;
 import io.github.cj_cate.ideationitems.Utils.TagUtil;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -101,6 +102,8 @@ public class GetRecipeCommand implements CommandExecutor {
 
                 ItemStack infosign = ItemUtil.makeItem(Material.OAK_SIGN, net.md_5.bungee.api.ChatColor.YELLOW + "Info",
                         List.of("This recipe is shapeless :3"));
+                TagUtil.tagDisabled(infosign);
+
                 inv.setItem(14, infosign);
 
                 for (int i = 0; i < 3; i++) {
@@ -157,8 +160,8 @@ public class GetRecipeCommand implements CommandExecutor {
 
         }
 
-        inv.setItem(outputSlot, p.getInventory().getItemInMainHand());
-        inv.setItem(iconSlot, craftingIcon);
+        inv.setItem(outputSlot, TagUtil.tagDisabled(item, "", ChatColor.RED + "Preview item"));
+        inv.setItem(iconSlot, TagUtil.tagDisabled(craftingIcon, false));
         p.openInventory(inv);
     }
 

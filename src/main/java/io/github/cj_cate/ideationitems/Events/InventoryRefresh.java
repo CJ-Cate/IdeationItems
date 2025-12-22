@@ -60,7 +60,13 @@ public class InventoryRefresh implements CommandExecutor, Listener
             if(TagUtil.hasCustomValue(item) && !TagUtil.isDisabled(item))
             {
                 // So now we can check to see if the item we have stored internally is the same as the one they have
-                ItemStack updated_item = ItemMaps.getBlueprint(TagUtil.getCustomValue(item)).item();
+                ItemStack updated_item;
+                try {
+                    updated_item = ItemMaps.getBlueprint(TagUtil.getCustomValue(item)).item();
+                } catch (NullPointerException e) {
+                    Main.log("IdeationItems/InventoryRefresh: Item detected which is not found in your version of the plugin on player " + p.getName() + ". Skipping.");
+                    continue;
+                }
                 if(!(updated_item.isSimilar(item))) // We use .isSimilar() instead of .equals() to account for stack size
                 {
                     // Now we have confirmed that the item is a custom item but not the same as the one that we have stored,

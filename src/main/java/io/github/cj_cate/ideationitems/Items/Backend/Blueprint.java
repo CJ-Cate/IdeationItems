@@ -149,6 +149,7 @@ public record Blueprint(ItemStack item, String value, Categories category, Recip
         }
     }
 
+    // Method to implement shaped crafting in all valid positions
     private static List<String[]> getAllPatterns(String[] string_pattern) {
         List<String[]> result = new ArrayList<>();
         int len = string_pattern.length;

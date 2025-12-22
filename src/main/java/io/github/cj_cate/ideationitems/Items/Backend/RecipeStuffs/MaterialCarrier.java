@@ -25,7 +25,7 @@ public class MaterialCarrier {
     }
     public String itemValue; // save this string to bring the item in later after bps load into ItemMap
 
-    // default key,recipechoice
+    // default shaped key,recipechoice
     public MaterialCarrier(char key, RecipeChoice recipeChoice) {
         this.key = key;
         this.recipeChoice = recipeChoice;

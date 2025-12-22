@@ -68,3 +68,6 @@ commands:
   remove:
     usage: /remove
     description: remove disabled items from inventory
+  getrecipe:
+    usage: /getrecipe
+    description: Get the custom recipe of an item, if it exists
