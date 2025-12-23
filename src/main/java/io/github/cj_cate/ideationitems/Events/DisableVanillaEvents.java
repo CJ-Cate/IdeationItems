@@ -229,7 +229,7 @@ public class DisableVanillaEvents implements Listener {
 
     @EventHandler
     public void stopPlacingUnplaceableItems(BlockPlaceEvent e) {
-        if(TagUtil.getCustomValue(e.getItemInHand(), "unplaceable").equals("true")) { e.setCancelled(true); }
+        if(TagUtil.hasCustomValue(e.getItemInHand(), "unplaceable")) { e.setCancelled(true); }
     }
 
 }

@@ -18,6 +18,8 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.HashMap;
+
 import static io.github.cj_cate.ideationitems.Utils.GuiUtil.createInventory;
 
 /**
@@ -33,7 +35,6 @@ public class MallCommand implements Listener, CommandExecutor
     private static final String mallName = "Mall";
 //    public String getMallName() { return mallName; }
     private final int slots_per_page = 45;
-    private int page = 0; //TODO: Test this in multiplayer to see if change this to a map of [player:page]
     private final int page_max = (int) Math.ceil((double) ItemMaps.getBlueprints().size() / slots_per_page);
     private final ItemStack air = new ItemStack(Material.AIR);
     private final Blueprint[][] book = new Blueprint[page_max][slots_per_page];
@@ -41,6 +42,14 @@ public class MallCommand implements Listener, CommandExecutor
     private final Blueprint bair = new Blueprint(ItemUtil.makeItem(Material.LIGHT_GRAY_STAINED_GLASS_PANE, ""),
                                             "air", Categories.SECRET, null);
 
+    // This is a little bit extra but works flawlessly
+    private final HashMap<Player, Integer> page = new HashMap<>();
+    private Integer getPage(Player player) {
+        return page.getOrDefault(player, 0);
+    }
+    private void setPage(Player player, Integer page) {
+        this.page.put(player, page);
+    }
 
     public MallCommand()
     {
@@ -90,15 +99,20 @@ public class MallCommand implements Listener, CommandExecutor
     {
         if(!e.getView().getTitle().equalsIgnoreCase(mallName)) return;
         if(e.getCurrentItem() == null || e.getCurrentItem().getItemMeta() == null) return;
+        Player p = (Player) e.getWhoClicked();
         // turn right
         if(e.getCurrentItem().getItemMeta().getDisplayName().contains("Turn Right")) {
-            page += (page == page_max - 1) ? 0 : 1;
+            if(getPage(p) != page_max - 1) {
+                setPage(p, getPage(p) + 1);
+            }
             refreshMall(e.getInventory());
             return;
         }
         // turn left
         if(e.getCurrentItem().getItemMeta().getDisplayName().contains("Turn Left")) {
-            page += (page == 0) ? 0 : -1;
+            if(page.get(p) != 0) {
+                setPage(p, getPage(p) - 1);
+            }
             refreshMall(e.getInventory());
         }
     }
@@ -145,11 +159,12 @@ public class MallCommand implements Listener, CommandExecutor
 
 
     private void refreshMall(Inventory inv) {
+        int player_page = page.get((Player) inv.getViewers().getFirst());
         for (int i = 0; i < slots_per_page; i++) {
-            if(book[page][i].equals(bair)) {
+            if(book[player_page][i].equals(bair)) {
                 inv.setItem(i, air);
             } else {
-                inv.setItem(i, book[page][i].item());
+                inv.setItem(i, book[player_page][i].item());
             }
         }
     }

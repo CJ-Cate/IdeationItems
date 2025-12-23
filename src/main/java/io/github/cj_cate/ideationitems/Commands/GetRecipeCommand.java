@@ -78,13 +78,13 @@ public class GetRecipeCommand implements CommandExecutor {
                     map.put(mc.getKey(), getItemFromMaterialCarrier(mc));
                 }
 
-                // Basically, go through all the characters and get the thing they represent then put it in the grid
+                // Go through all the characters and get the thing they represent then put it in the grid
                 char[] ca;
                 for (int i = 0; i < 3; i++) {
                     ca = ra[i].toCharArray();
                     for (int j = 0; j < 3; j++) {
                         if(ca[j] != ' ') {
-                            inv.setItem(i*9 + j + 10, map.get(ca[j]));
+                            inv.setItem(i*9 + j + 10, TagUtil.tagDisabled(map.get(ca[j])));
                         }
                     }
                 }
@@ -114,18 +114,19 @@ public class GetRecipeCommand implements CommandExecutor {
                         }
 
                         ItemStack viewitem = getItemFromMaterialCarrier(recipeHolder.getMaterialCarrierArrayList().get(i*3 + j));
-                        inv.setItem(i*9 + j + 10, viewitem);
+                        inv.setItem(i*9 + j + 10, TagUtil.tagDisabled(viewitem));
                     }
                 }
             }
-            // YES i know this is ugly how about you fucking DEAL WITH IT because iT WORKS!!!!!!!!!!!!!!
+            // The following is not necessarily "best practice" but it works and its clean (enough)
+            // If I ever need to change it for any reason I will make it nicer <3
             case FURNACE_RECIPE -> {
                 addCraftingGlass(inv, Material.BLACK_STAINED_GLASS_PANE);
                 craftingIcon = ItemUtil.makeItem(Material.FURNACE, "Furnace",
                         List.of("Cooking time: " + recipeHolder.getCookingTime() / 20 + "s"));
                 iconSlot -= 1;
                 outputSlot -= 1;
-                inv.setItem(20, getItemFromMaterialCarrier(recipeHolder.getSource()));
+                inv.setItem(20, TagUtil.tagDisabled(getItemFromMaterialCarrier(recipeHolder.getSource())));
             }
             case BLASTING_RECIPE -> {
                 addCraftingGlass(inv, Material.BLACK_STAINED_GLASS_PANE);
@@ -133,7 +134,7 @@ public class GetRecipeCommand implements CommandExecutor {
                         List.of("Cooking time: " + recipeHolder.getCookingTime() / 20 + "s"));
                 iconSlot -= 1;
                 outputSlot -= 1;
-                inv.setItem(20, getItemFromMaterialCarrier(recipeHolder.getSource()));
+                inv.setItem(20, TagUtil.tagDisabled(getItemFromMaterialCarrier(recipeHolder.getSource())));
             }
             case SMOKING_RECIPE -> {
                 addCraftingGlass(inv, Material.BLACK_STAINED_GLASS_PANE);
@@ -141,7 +142,7 @@ public class GetRecipeCommand implements CommandExecutor {
                         List.of("Cooking time: " + recipeHolder.getCookingTime() / 20 + "s"));
                 iconSlot -= 1;
                 outputSlot -= 1;
-                inv.setItem(20, getItemFromMaterialCarrier(recipeHolder.getSource()));
+                inv.setItem(20, TagUtil.tagDisabled(getItemFromMaterialCarrier(recipeHolder.getSource())));
             }
             case CAMPFIRE_RECIPE -> {
                 addCraftingGlass(inv, Material.BLACK_STAINED_GLASS_PANE);
@@ -149,7 +150,7 @@ public class GetRecipeCommand implements CommandExecutor {
                         List.of("Cooking time: " + recipeHolder.getCookingTime() / 20 + "s"));
                 iconSlot -= 1;
                 outputSlot -= 1;
-                inv.setItem(20, getItemFromMaterialCarrier(recipeHolder.getSource()));
+                inv.setItem(20, TagUtil.tagDisabled(getItemFromMaterialCarrier(recipeHolder.getSource())));
             }
 
             default -> {
@@ -163,6 +164,10 @@ public class GetRecipeCommand implements CommandExecutor {
         inv.setItem(outputSlot, TagUtil.tagDisabled(item, "", ChatColor.RED + "Preview item"));
         inv.setItem(iconSlot, TagUtil.tagDisabled(craftingIcon, false));
         p.openInventory(inv);
+    }
+
+    private static void createCookingRecipeTemplate(Material crafting_icon) {
+
     }
 
     private static void addCraftingGlass(Inventory inv, Material material) {
