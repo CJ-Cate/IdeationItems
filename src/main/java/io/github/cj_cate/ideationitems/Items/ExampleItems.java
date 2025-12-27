@@ -88,7 +88,18 @@ public class ExampleItems extends ItemClass
                 "is enough to make the heavens cry"
             )));
 
-        return new Blueprint(item, "stormcall_bow", Categories.UTILITY, null,
+        return new Blueprint(item, "stormcall_bow", Categories.UTILITY,
+                new RecipeHolder(
+                    RecipeType.SHAPED_RECIPE,
+                    new String[]{
+                        " WS",
+                        "WLS",
+                        " WS"
+                    },
+                    new MaterialCarrier('W', Material.STICK),
+                    new MaterialCarrier('L', Material.LIGHTNING_ROD),
+                    new MaterialCarrier('S', Material.STRING)
+                ),
             new InteractEffect_EntityShootBowEvent(e -> {
 //                    if(ItemUtil.)
                 if(!(e.getBow() != null && e.getBow().isSimilar(item))) {
