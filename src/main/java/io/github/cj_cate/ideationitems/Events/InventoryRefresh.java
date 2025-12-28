@@ -64,7 +64,7 @@ public class InventoryRefresh implements CommandExecutor, Listener
                 try {
                     updated_item = ItemMaps.getBlueprint(TagUtil.getCustomValue(item)).item();
                 } catch (NullPointerException e) {
-                    Main.log("IdeationItems/InventoryRefresh: Item detected which is not found in your version of the plugin on player " + p.getName() + ". Skipping.");
+                    Main.log("IdeationItems/InventoryRefresh: Item '" + TagUtil.getCustomValue(item) + "' not found in your version of the plugin on player " + p.getName() + ". Skipping.");
                     continue;
                 }
                 if(!(updated_item.isSimilar(item))) // We use .isSimilar() instead of .equals() to account for stack size
@@ -73,9 +73,7 @@ public class InventoryRefresh implements CommandExecutor, Listener
                     //  therefore we can update it with these methods
                     item.setItemMeta(updated_item.getItemMeta());
                     item.setType(updated_item.getType());
-//                    item.setData(updated_item.getData()); // this line caused an error
 
-                    // Note to future self: If there are issues, then you may have to manually refresh the players inventory here
                     items_updated_array.add(item);
                 }
             }
