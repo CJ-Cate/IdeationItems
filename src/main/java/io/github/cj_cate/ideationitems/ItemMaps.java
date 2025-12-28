@@ -15,7 +15,15 @@ public class ItemMaps {
     public static List<Blueprint> getBlueprints() { return blooMap.values().stream().toList(); }
     public static List<String> getKeys() { return blooMap.keySet().stream().toList(); }
 
-    public static Blueprint getBlueprint(String key) { return blooMap.get(key); }
+    public static Blueprint getBlueprint(String key) {
+        try {
+            return blooMap.get(key);
+        } catch (NullPointerException e) {
+            Main.log("Error at ItemMaps/getBlueprint: Could not find key '" + key + "'");
+            e.printStackTrace();
+            return null;
+        }
+    }
     public static ItemStack getItem(String custom_value) { return blooMap.get(custom_value).item(); }
     public static ItemStack getItem(String custom_value, int amount) {
         if(amount <= 0) throw new IllegalArgumentException("Cannot have invalid amount, reference ItemMaps!");
