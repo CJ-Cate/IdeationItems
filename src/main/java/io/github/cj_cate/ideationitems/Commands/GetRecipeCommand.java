@@ -4,7 +4,6 @@ import io.github.cj_cate.ideationitems.ItemMaps;
 import io.github.cj_cate.ideationitems.Items.Backend.Blueprint;
 import io.github.cj_cate.ideationitems.Items.Backend.RecipeStuffs.MaterialCarrier;
 import io.github.cj_cate.ideationitems.Items.Backend.RecipeStuffs.RecipeHolder;
-import io.github.cj_cate.ideationitems.Main;
 import io.github.cj_cate.ideationitems.Utils.GuiUtil;
 import io.github.cj_cate.ideationitems.Utils.ItemUtil;
 import io.github.cj_cate.ideationitems.Utils.TagUtil;
@@ -14,6 +13,9 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.List;
 
-public class GetRecipeCommand implements CommandExecutor {
+public class GetRecipeCommand implements CommandExecutor, Listener {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
@@ -29,6 +31,7 @@ public class GetRecipeCommand implements CommandExecutor {
                 || p.getInventory().getItemInMainHand().equals(Material.AIR)) {
             return true;
         }
+        // The version where the player manually calls it. In other calls, the item is passed in.
         openRecipeMenu(p, p.getInventory().getItemInMainHand());
         return true;
     }
@@ -37,13 +40,14 @@ public class GetRecipeCommand implements CommandExecutor {
     public static void openRecipeMenu(Player p, ItemStack item) {
         Blueprint bloo = ItemMaps.getBlueprint(TagUtil.getCustomValue(item));
 
+        // Basic checks where the inventory check would fail and needs to be exited
         if(bloo == null && TagUtil.hasVanillaValue(p.getInventory().getItemInMainHand())) {
-            Main.debug("Category vanilla item detected");
+            p.sendMessage("Category vanilla item detected");
             bloo = ItemMaps.getBlueprint(TagUtil.getCustomValue(p.getInventory().getItemInMainHand(), TagUtil.Tag.VANILLA.getTag()));
         }
 
         if(bloo == null) {
-            Main.debug("Pure vanilla item detected, exiting");
+            p.sendMessage("Pure vanilla item detected, exiting");
             return;
         }
 
@@ -58,7 +62,7 @@ public class GetRecipeCommand implements CommandExecutor {
         int outputSlot = 25;
         Inventory inv = GuiUtil.createInventory(54, "Recipe Preview");
 
-
+        // For each type of recipe, go through and change the format for the page
         switch(recipeHolder.getRecipeType()) {
             case SHAPED_RECIPE -> {
                 String[] ra = recipeHolder.getRecipeArray();
@@ -118,8 +122,8 @@ public class GetRecipeCommand implements CommandExecutor {
                     }
                 }
             }
-            // The following is not necessarily "best practice" but it works and its clean (enough)
-            // If I ever need to change it for any reason I will make it nicer <3
+            // The following is not necessarily "clean" but its not strictly an abuse of code either.
+            // It could be simplified, but in general I am careful to keep the codebase in check.
             case FURNACE_RECIPE -> {
                 addCraftingGlass(inv, Material.BLACK_STAINED_GLASS_PANE);
                 craftingIcon = ItemUtil.makeItem(Material.FURNACE, "Furnace",
@@ -163,11 +167,12 @@ public class GetRecipeCommand implements CommandExecutor {
 
         inv.setItem(outputSlot, TagUtil.tagDisabled(item, "", ChatColor.RED + "Preview item"));
         inv.setItem(iconSlot, TagUtil.tagDisabled(craftingIcon, false));
+
+        // back arrow on bottom left
+        ItemStack backArrow = ItemUtil.makeItem(Material.ARROW, "Back");
+        inv.setItem(45, TagUtil.tagDisabled(backArrow));
+
         p.openInventory(inv);
-    }
-
-    private static void createCookingRecipeTemplate(Material crafting_icon) {
-
     }
 
     private static void addCraftingGlass(Inventory inv, Material material) {
@@ -187,6 +192,15 @@ public class GetRecipeCommand implements CommandExecutor {
             return ItemMaps.getBlueprint(TagUtil.getCustomValue(mc.getRecipeChoice().getItemStack())).item();
         } else {
             return mc.getRecipeChoice().getItemStack();
+        }
+    }
+
+    @EventHandler
+    public void onClickBackArrow(InventoryClickEvent e) {
+        if(!e.getView().getTitle().equalsIgnoreCase("Recipe Preview")) return;
+        if(e.getCurrentItem().getItemMeta().getDisplayName().contains("Back")) {
+            Player p = (Player) e.getWhoClicked();
+            p.performCommand("mall");
         }
     }
 

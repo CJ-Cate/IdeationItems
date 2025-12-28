@@ -86,9 +86,23 @@ public class MallCommand implements Listener, CommandExecutor
 
         final Inventory mallInv = createInventory(54, "Mall");
 
+        if(args.length != 0) {
+            try {
+                int new_page = Integer.valueOf(args[0]);
+
+                if(new_page > page_max - 1) {
+                    new_page = page_max - 1;
+                } else if(new_page < 0) {
+                    new_page = 0;
+                }
+                setPage(p, new_page);
+
+            } catch (NumberFormatException e) { }
+        }
+
         GuiUtil.addGlassMinimal(mallInv);
         GuiUtil.addArrows(mallInv);
-        refreshMall(mallInv);
+        refreshMall(mallInv, p);
         p.openInventory(mallInv);
         return true;
     }
@@ -105,15 +119,15 @@ public class MallCommand implements Listener, CommandExecutor
             if(getPage(p) != page_max - 1) {
                 setPage(p, getPage(p) + 1);
             }
-            refreshMall(e.getInventory());
+            refreshMall(e.getInventory(), p);
             return;
         }
         // turn left
         if(e.getCurrentItem().getItemMeta().getDisplayName().contains("Turn Left")) {
-            if(page.get(p) != 0) {
+            if(getPage(p) != 0) {
                 setPage(p, getPage(p) - 1);
             }
-            refreshMall(e.getInventory());
+            refreshMall(e.getInventory(), p);
         }
     }
 
@@ -158,8 +172,8 @@ public class MallCommand implements Listener, CommandExecutor
     }
 
 
-    private void refreshMall(Inventory inv) {
-        int player_page = page.get((Player) inv.getViewers().getFirst());
+    private void refreshMall(Inventory inv, Player player) {
+        int player_page = getPage(player);
         for (int i = 0; i < slots_per_page; i++) {
             if(book[player_page][i].equals(bair)) {
                 inv.setItem(i, air);
