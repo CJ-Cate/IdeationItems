@@ -60,14 +60,17 @@ public final class Main extends JavaPlugin {
         // run this constructor before all the other recipes so that only vanilla ones are removed
         InventoryRefresh _inventoryRefresh = new InventoryRefresh();
 
-        // implement
+        // Loop through all ItemClass in Items directory and...
+        //  1. find all public Blueprint methods to implement the item
+        //  2. register events in said classes
         try {
-            // Predicate.not(Class::isAnonymousClass) === aclass -> !aclass.isAnonymousClass()
+            // Predicate.not(Class::isAnonymousClass) === aclass -> !aclass.isAnonymousClass() // logical equivalency, not a line of code to run
             for(Class<?> clazz : JarPackageScanner.findClassesInJar("io.github.cj_cate.ideationitems.Items", Predicate.not(Class::isAnonymousClass),false))
             {
                 // make sure its an itemclass
                 if(!ItemClass.class.isAssignableFrom(clazz)) continue;
 
+                // try to instantiate the class
                 Object instance;
                 try {
                     instance = clazz.getDeclaredConstructor().newInstance();
@@ -100,29 +103,36 @@ public final class Main extends JavaPlugin {
 
         new ScoreboardUtil(); // for appy appy constructor mefod :3
 
-        /* Event Registering starts here */
+        // //
+        // // Event Registering starts here
+        // //
 
-        Bukkit.getPluginManager().registerEvents(_inventoryRefresh, this); // Refreshes inventory when a command is run or player joins the server
+        // Refreshes inventory when a command is run or player joins the server. You want this.
+        Bukkit.getPluginManager().registerEvents(_inventoryRefresh, this);
 
-        Bukkit.getPluginManager().registerEvents(new DisableVanillaEvents(), this); // The events created to disable certain vanilla game aspects
-//        Bukkit.getPluginManager().registerEvents(new CustomDisabledItemEvents(), this); // Events to handle custom disabled items
+        // The events created to disable certain vanilla game aspects. Opinionated, so go configure it. You probably want this.
+        Bukkit.getPluginManager().registerEvents(new DisableVanillaEvents(), this);
 
-        //Disabled during testing AND until I can find a way to make the constructors appy appy
-//        Bukkit.getPluginManager().registerEvents(new CustomMobSpawning(), this); // Handles spawning NMS entities in the world
-//        Bukkit.getPluginManager().registerEvents(new DebugEvents(), this); // Debug specific stuff
+        // Debug specific stuff, enable when you need it.
+//        Bukkit.getPluginManager().registerEvents(new DebugEvents(), this);
 
-        MallCommand _mallCommand = new MallCommand();
-        Bukkit.getPluginManager().registerEvents(_mallCommand, this);
+        MallCommand mallCommand = new MallCommand();
+        Bukkit.getPluginManager().registerEvents(mallCommand, this);
+        GetRecipeCommand getRecipeCommand = new GetRecipeCommand();
+        Bukkit.getPluginManager().registerEvents(getRecipeCommand, this);
 
-        /* */
-        /* Command registering start here */
-        /* */
+        // //
+        // // Command registering start here
+        // //
 
-        getCommand("mall").setExecutor(_mallCommand); // ADVANCED mall command
+        // Mall command to preview recipes and cheat in items (with admin permissions)
+        getCommand("mall").setExecutor(mallCommand);
 
+        // Manually refresh your own inventory
         // TODO: add an admin-only param to refresh someone elses inventory
-        getCommand("invr").setExecutor(_inventoryRefresh); // Manually refresh your own inventory
+        getCommand("invr").setExecutor(_inventoryRefresh);
 
+        // Various commands re-implemnented
         UtilCommands utilCommands = new UtilCommands();
         getCommand("rename").setExecutor(utilCommands);
         getCommand("gmc").setExecutor(utilCommands);
@@ -139,10 +149,12 @@ public final class Main extends JavaPlugin {
         getCommand("uuid").setExecutor(debugCommands); // Debug command
         getCommand("reload-ideas").setExecutor(debugCommands); // Debug command
 
+        // Removes extra disabled items if they get stuck in your inventory
         getCommand("remove").setExecutor(new RemoveDisabledItemsCommand());
+        // Get the hashcode of an item, used to create resource packs. No
         getCommand("hashcode").setExecutor(new HashcodeCommand());
-
-        getCommand("getrecipe").setExecutor(new GetRecipeCommand());
+        // Get the recipe for an item without going through the mall
+        getCommand("getrecipe").setExecutor(getRecipeCommand);
 
     }
 
