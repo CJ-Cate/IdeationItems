@@ -41,13 +41,14 @@ public class GetRecipeCommand implements CommandExecutor, Listener {
         Blueprint bloo = ItemMaps.getBlueprint(TagUtil.getCustomValue(item));
 
         // Basic checks where the inventory check would fail and needs to be exited
-        if(bloo == null && TagUtil.hasVanillaValue(p.getInventory().getItemInMainHand())) {
+        if(TagUtil.hasVanillaValue(p.getInventory().getItemInMainHand())) {
             p.sendMessage("Category vanilla item detected");
-            bloo = ItemMaps.getBlueprint(TagUtil.getCustomValue(p.getInventory().getItemInMainHand(), TagUtil.Tag.VANILLA.getTag()));
+            ItemStack held_item = p.getInventory().getItemInMainHand();
+            bloo = ItemMaps.getBlueprint(TagUtil.getCustomValue(held_item, TagUtil.Tag.VANILLA.getTag()));
         }
 
         if(bloo == null) {
-            p.sendMessage("Pure vanilla item detected, exiting");
+            p.sendMessage("No bloo found, pure vanilla item detected, exiting");
             return;
         }
 

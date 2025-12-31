@@ -34,14 +34,11 @@ import java.util.Arrays;
 
 //problem: minecraft has poor mechanics. solution: i fix it by turning them all offss
 
-public class DisableVanillaEvents implements Listener {
-    /**
-     * This plugin changes many core things about the game. It is not intended to be mixed with various other plugins.
-     */
+public class ModifyVanillaEvents implements Listener {
 
     // This plugin is not built to handle when things break, because durability changes the metadata. This was an early
-    // and intentional design choice. This should not be changed while this plugin is being used.
-    // The things that are commented are things that have ignored with purpose and intent.
+    // and intentional design choice. This sounds controversial, but has actually been a beloved change by every
+    // person that has used it.
     public static final ArrayList<Material> durableItems = new ArrayList<>(Arrays.asList(
             Material.WOODEN_SHOVEL, Material.WOODEN_AXE, Material.WOODEN_PICKAXE, Material.WOODEN_HOE, Material.WOODEN_SWORD,
             Material.LEATHER_HELMET, Material.LEATHER_CHESTPLATE, Material.LEATHER_LEGGINGS, Material.LEATHER_BOOTS,
@@ -90,31 +87,7 @@ public class DisableVanillaEvents implements Listener {
         e.getBrokenItem().setItemMeta(m);
     }
 
-    // Anvils are used for renaming, repairing, and applying book enchants. None of those things are applicable.
-    @EventHandler
-    public void disableAnvils(PlayerInteractEvent e) {
-        if(e.getClickedBlock() != null && e.getClickedBlock().getType().name().contains("anvil"))
-        {
-            e.setCancelled(true);
-            e.getClickedBlock().getWorld().playSound(e.getClickedBlock().getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 1, 1);
-            e.getPlayer().sendMessage(ChatColor.AQUA + "Sorry for the inconvenience, this block is disabled.");
-        }
-    }
-
-    // Regardless, if someone is in an anvil GUI they should be warned.
-    @EventHandler
-    public void anvilWarning(PrepareAnvilEvent e)
-    {
-        for(HumanEntity h : e.getViewers())
-        {
-            if(h instanceof Player p)
-            {
-                p.sendMessage(ChatColor.RED + "Warning: certain anvil functions do not work or may be reverted after use");
-            }
-        }
-    }
-
-    // Disable elytras. This function can be restored if you wish.
+    // Disable elytras
     @EventHandler
     public void disableGliding(PlayerMoveEvent e)
     {
@@ -151,85 +124,6 @@ public class DisableVanillaEvents implements Listener {
         }
     }
 
-    // Used to handle custom crafting; The entire custom-crafting system is a work-in-progress, but leave this.
-    @EventHandler
-    public void disbableCraftingWithCustomItems(PrepareItemCraftEvent e) {
-        // very small chance need to check for repair item recipe. i will choose to ignore this because I dont want to test it. check the docs.
-        if(e.getRecipe() == null || e.getRecipe().getResult() == null) return;
 
-        // if the result has no custom value AND there are custom things in the grid then cancel it (by setting result air)
-        if(!TagUtil.hasCustomValue(e.getRecipe().getResult())) {
-            for(ItemStack item : e.getInventory().getStorageContents()) {
-                if(TagUtil.hasCustomValue(item)) {
-                    e.getInventory().setResult(new ItemStack(Material.AIR));
-                    return;
-                }
-            }
-        }
-    }
-
-    // Stop players from placing items that are represented as blocks
-    @EventHandler
-    public void placeItem(BlockPlaceEvent e)
-    {
-        // This one doesn't need a null check, not exactly sure why
-        if(e.getItemInHand().getItemMeta() != null)
-        {
-            if(e.getItemInHand().getItemMeta().getPersistentDataContainer().has(new NamespacedKey(Main.getMain(), "unplaceable"), PersistentDataType.STRING))
-            {
-                e.setCancelled(true);
-            }
-        }
-    }
-
-
-    // TODO: This event likely needs to be changed, but what do I know is ATM it just removed all items when hotbar slot changes but like idk
-    @EventHandler
-    public void removeDisabledFromOffHandOnChange(PlayerItemHeldEvent e)
-    {
-        if(e.getPlayer().getInventory().getItemInOffHand().getItemMeta() != null && TagUtil.isDisabled(e.getPlayer().getInventory().getItemInOffHand()))
-        {
-            e.getPlayer().getInventory().setItemInOffHand(new ItemStack(Material.AIR));
-        }
-    }
-
-    // Any item tagged "disabled" should not be able to be picked up
-    @EventHandler
-    public void removeDisabledOnPickup_1(InventoryPickupItemEvent e) // Hoppers & Minecart-Hoppers picking up items
-    {
-        if(TagUtil.isDisabled(e.getItem().getItemStack())) e.setCancelled(true);
-    }
-
-    @EventHandler
-    public void removeDisabledOnPickup_2(EntityPickupItemEvent e) // For players and other enteties
-    {
-        if(TagUtil.isDisabled(e.getItem().getItemStack())) e.setCancelled(true);
-    }
-
-    // Disabled Items Logic
-    @EventHandler
-    public void stopInventoryMovingDisabledItems(InventoryClickEvent e)
-    {
-        if(e.getCurrentItem() == null) return;
-        if(TagUtil.isDisabled(e.getCurrentItem()))
-        {
-            e.setResult(Event.Result.DENY);
-            //e.getCursor().setType(Material.AIR);
-        }
-    }
-
-    @EventHandler
-    public void stopDroppingDisabledItems(PlayerDropItemEvent e)
-    {
-        if(TagUtil.isDisabled(e.getItemDrop().getItemStack())) {
-            e.setCancelled(true);
-            e.getItemDrop().setItemStack(new ItemStack(Material.AIR));
-        }
-    }
-
-    @EventHandler
-    public void stopPlacingUnplaceableItems(BlockPlaceEvent e) {
-        if(TagUtil.hasCustomValue(e.getItemInHand(), "unplaceable")) { e.setCancelled(true); }
-    }
 
 }

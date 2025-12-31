@@ -1,5 +1,6 @@
-package io.github.cj_cate.ideationitems.Events;
+package io.github.cj_cate.ideationitems.Commands;
 
+import io.github.cj_cate.ideationitems.Events.ModifyVanillaEvents;
 import io.github.cj_cate.ideationitems.ItemMaps;
 import io.github.cj_cate.ideationitems.Items.ReimplentationItems;
 import io.github.cj_cate.ideationitems.Main;
@@ -43,7 +44,7 @@ public class InventoryRefresh implements CommandExecutor, Listener
                 recipe = recipeIterator.next();
                 if (recipe != null && ReimplentationItems.markToRemove.contains(recipe.getResult().getType())) {
                     recipeIterator.remove();
-                } else if (!TagUtil.hasCustomValue(recipe.getResult())) {
+                } else if (!TagUtil.hasCustomValue(recipe.getResult())) { 
                     addToEveryRecipeList(((Keyed) recipe).getKey());
                 }
             } while (recipeIterator.hasNext());
@@ -51,7 +52,8 @@ public class InventoryRefresh implements CommandExecutor, Listener
     }
 
     private void refreshInventory(Player p) {
-        ArrayList<ItemStack> items_updated_array = new ArrayList<>();
+        ArrayList<String> items_updated_array = new ArrayList<>();
+        ArrayList<String> items_old_array = new ArrayList<>();
         for(ItemStack item : p.getInventory().getContents() )
         {
             if(item == null) continue;
@@ -69,12 +71,14 @@ public class InventoryRefresh implements CommandExecutor, Listener
                 }
                 if(!(updated_item.isSimilar(item))) // We use .isSimilar() instead of .equals() to account for stack size
                 {
+                    // For loggin to the player
+                    items_updated_array.add(updated_item.getItemMeta().getDisplayName());
+                    items_old_array.add(item.getItemMeta().getDisplayName());
                     // Now we have confirmed that the item is a custom item but not the same as the one that we have stored,
                     //  therefore we can update it with these methods
+
                     item.setItemMeta(updated_item.getItemMeta());
                     item.setType(updated_item.getType());
-
-                    items_updated_array.add(item);
                 }
             }
         }
@@ -82,9 +86,8 @@ public class InventoryRefresh implements CommandExecutor, Listener
         if(!items_updated_array.isEmpty())
         {
             p.sendMessage(ChatColor.AQUA + "These items have been updated:");
-            for(ItemStack i : items_updated_array)
-            {
-                p.sendMessage(ChatColor.AQUA + "- " + i.getItemMeta().getDisplayName());
+            for (int i = 0; i < items_updated_array.size(); i++) {
+                p.sendMessage(ChatColor.AQUA + "$ " + items_old_array.get(i) + " -> " + items_updated_array.get(i));
             }
         } else p.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "No items updated; your inventory is funky fresh!");
 
@@ -107,7 +110,7 @@ public class InventoryRefresh implements CommandExecutor, Listener
         {
             if(i == null) continue;
 
-            if(i.getItemMeta() instanceof Damageable d && DisableVanillaEvents.durableItems.contains(i.getType()))
+            if(i.getItemMeta() instanceof Damageable d && ModifyVanillaEvents.durableItems.contains(i.getType()))
             {
                 if(d.getDamage() != i.getType().getMaxDurability())
                 {

@@ -1,12 +1,12 @@
 package io.github.cj_cate.ideationitems;
 
 import io.github.cj_cate.ideationitems.Commands.*;
-import io.github.cj_cate.ideationitems.Events.DisableVanillaEvents;
-import io.github.cj_cate.ideationitems.Events.InventoryRefresh;
+import io.github.cj_cate.ideationitems.Events.DisabledItemEvents;
+import io.github.cj_cate.ideationitems.Events.ModifyVanillaEvents;
+import io.github.cj_cate.ideationitems.Commands.InventoryRefresh;
 import io.github.cj_cate.ideationitems.Items.Backend.Blueprint;
 import io.github.cj_cate.ideationitems.Items.Backend.ItemClass;
 import io.github.cj_cate.ideationitems.Utils.JarPackageScanner;
-import io.github.cj_cate.ideationitems.Utils.ScoreboardUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -58,7 +58,7 @@ public final class Main extends JavaPlugin {
         log("Ideation Items is starting!!! Yippieee!!!");
 
         // run this constructor before all the other recipes so that only vanilla ones are removed
-        InventoryRefresh _inventoryRefresh = new InventoryRefresh();
+        InventoryRefresh inventoryRefresh = new InventoryRefresh();
 
         // Loop through all ItemClass in Items directory and...
         //  1. find all public Blueprint methods to implement the item
@@ -101,25 +101,28 @@ public final class Main extends JavaPlugin {
             throw new RuntimeException(e);
         }
 
-        new ScoreboardUtil(); // for appy appy constructor mefod :3
+//        new ScoreboardUtil(); // for appy appy constructor mefod :3
 
         // //
         // // Event Registering starts here
-        // //
+        // // IMPORTANT: Events that are in an ItemClass are automatically registered. Don't double-register them!
+        // // 
 
         // Refreshes inventory when a command is run or player joins the server. You want this.
-        Bukkit.getPluginManager().registerEvents(_inventoryRefresh, this);
+        Bukkit.getPluginManager().registerEvents(inventoryRefresh, this);
 
         // The events created to disable certain vanilla game aspects. Opinionated, so go configure it. You probably want this.
-        Bukkit.getPluginManager().registerEvents(new DisableVanillaEvents(), this);
+        Bukkit.getPluginManager().registerEvents(new ModifyVanillaEvents(), this);
+        Bukkit.getPluginManager().registerEvents(new DisabledItemEvents(), this);
 
-        // Debug specific stuff, enable when you need it.
-//        Bukkit.getPluginManager().registerEvents(new DebugEvents(), this);
 
         MallCommand mallCommand = new MallCommand();
         Bukkit.getPluginManager().registerEvents(mallCommand, this);
         GetRecipeCommand getRecipeCommand = new GetRecipeCommand();
         Bukkit.getPluginManager().registerEvents(getRecipeCommand, this);
+
+        // Debug specific stuff, enable when you need it.
+//        Bukkit.getPluginManager().registerEvents(new DebugEvents(), this);
 
         // //
         // // Command registering start here
@@ -130,7 +133,7 @@ public final class Main extends JavaPlugin {
 
         // Manually refresh your own inventory
         // TODO: add an admin-only param to refresh someone elses inventory
-        getCommand("invr").setExecutor(_inventoryRefresh);
+        getCommand("invr").setExecutor(inventoryRefresh);
 
         // Various commands re-implemnented
         UtilCommands utilCommands = new UtilCommands();

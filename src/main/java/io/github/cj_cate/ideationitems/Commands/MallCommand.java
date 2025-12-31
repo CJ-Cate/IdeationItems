@@ -6,6 +6,7 @@ import io.github.cj_cate.ideationitems.Items.Backend.Categories;
 import io.github.cj_cate.ideationitems.Main;
 import io.github.cj_cate.ideationitems.Utils.GuiUtil;
 import io.github.cj_cate.ideationitems.Utils.ItemUtil;
+import io.github.cj_cate.ideationitems.Utils.TagUtil;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -151,6 +152,7 @@ public class MallCommand implements Listener, CommandExecutor
                 GetRecipeCommand.openRecipeMenu((Player) e.getWhoClicked(), e.getCurrentItem());
             }
             case SHIFT_LEFT -> {
+                if(e.getSlot() > 53) return;
                 ItemStack item = e.getCurrentItem();
                 if(e.getCurrentItem().getAmount() != item.getAmount()) {
                     Main.debug("Different amounts, changing! Report this");
@@ -158,19 +160,29 @@ public class MallCommand implements Listener, CommandExecutor
                     item.setAmount(e.getCurrentItem().getAmount()); // could be a non-one amount
                 }
                 e.getWhoClicked().sendMessage("IdeationItems/Admin: Created item: " + item.getItemMeta().getDisplayName() + " x" + item.getAmount());
-                e.getWhoClicked().getInventory().addItem(item);
+                giveItem((Player) e.getWhoClicked(), item);
             }
             case MIDDLE ->  {
+                if(e.getSlot() > 53) return;
                 ItemStack item = e.getCurrentItem();
                 item.setAmount(item.getMaxStackSize());
                 e.getWhoClicked().sendMessage("IdeationItems/Admin: Created item: " + item.getItemMeta().getDisplayName() + " x" + item.getAmount());
-                e.getWhoClicked().getInventory().addItem(item);
+                giveItem((Player) e.getWhoClicked(), item);
             }
 
         }
 
     }
 
+    private void giveItem(Player p, ItemStack item) {
+        if (!TagUtil.hasVanillaValue(item)) {
+            p.getInventory().addItem(item);
+        } else {
+            ItemStack vanilla_item = new ItemStack(item.getType());
+            vanilla_item.setAmount(item.getAmount());
+            p.getInventory().addItem(vanilla_item);
+        }
+    }
 
     private void refreshMall(Inventory inv, Player player) {
         int player_page = getPage(player);
@@ -183,10 +195,5 @@ public class MallCommand implements Listener, CommandExecutor
         }
     }
 
-//    @EventHandler
-//    public void closecustominv(InventoryCloseEvent e)
-//    {
-//        //shutdown logic?
-//        //page = 0;
-//    }
+
 }

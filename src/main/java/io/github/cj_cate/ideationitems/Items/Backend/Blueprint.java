@@ -1,7 +1,7 @@
 package io.github.cj_cate.ideationitems.Items.Backend;
 
-import io.github.cj_cate.ideationitems.Events.DisableVanillaEvents;
-import io.github.cj_cate.ideationitems.Events.InventoryRefresh;
+import io.github.cj_cate.ideationitems.Events.ModifyVanillaEvents;
+import io.github.cj_cate.ideationitems.Commands.InventoryRefresh;
 import io.github.cj_cate.ideationitems.ItemMaps;
 import io.github.cj_cate.ideationitems.Items.Backend.InteractEffectClasses.InteractEffectHolder;
 import io.github.cj_cate.ideationitems.Items.Backend.RecipeStuffs.MaterialCarrier;
@@ -41,7 +41,7 @@ public record Blueprint(ItemStack item, String value, Categories category, Recip
     {
         ItemMeta m = item.getItemMeta();
 
-        if(DisableVanillaEvents.durableItems.contains(item.getType())){
+        if(ModifyVanillaEvents.durableItems.contains(item.getType())){
             m.setUnbreakable(true);
             m.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
         }

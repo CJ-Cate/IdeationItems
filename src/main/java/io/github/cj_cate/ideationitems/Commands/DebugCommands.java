@@ -37,9 +37,10 @@ public class DebugCommands implements CommandExecutor {
         snippets.put("getItemHeld", (p, args) -> {
             ItemStack i = p.getInventory().getItemInMainHand();
 
-            p.sendMessage("has: " + i.getItemMeta().getPersistentDataContainer().has(new NamespacedKey(Main.getMain(), "custom"), PersistentDataType.STRING));
-            p.sendMessage("pdc: " + i.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(Main.getMain(), "custom"), PersistentDataType.STRING));
-            p.sendMessage("pdc: " + i.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(Main.getMain(), "disabled"), PersistentDataType.STRING));
+            p.sendMessage("has custom: " + TagUtil.hasCustomValue(i));
+            p.sendMessage("get custom: " + TagUtil.getCustomValue(i));
+            p.sendMessage("get vanilla: " + TagUtil.getVanillaCustomValue(i));
+            p.sendMessage("disabled: " + TagUtil.isDisabled(i));
 //            p.sendMessage("droppable: " + i.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(main, "droppable"), PersistentDataType.STRING));
 //            p.sendMessage("moveable: " + i.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(main, "moveable"), PersistentDataType.STRING));
 //            p.sendMessage("pickupable: " + i.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(main, "pickupable"), PersistentDataType.STRING));

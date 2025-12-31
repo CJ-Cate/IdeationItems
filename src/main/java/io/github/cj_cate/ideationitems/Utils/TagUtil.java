@@ -53,11 +53,11 @@ public class TagUtil
         return item.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(Main.getMain(), key), PersistentDataType.STRING);
     }
 
-    public static boolean hasVanillaValue(ItemStack item)
+    public static String getVanillaCustomValue(ItemStack item)
     {
-        if(item == null || item.getItemMeta() == null) return false;
-        return item.getItemMeta().getPersistentDataContainer().has(new NamespacedKey(Main.getMain(), Tag.VANILLA.getTag()), PersistentDataType.STRING);
+        return getCustomValue(item, Tag.VANILLA.getTag());
     }
+
 
     public static boolean hasCustomValue(ItemStack item)
     {
@@ -70,6 +70,10 @@ public class TagUtil
         if(item == null || item.getItemMeta() == null) return false;
         return item.getItemMeta().getPersistentDataContainer().has(new NamespacedKey(Main.getMain(), key), PersistentDataType.STRING);
     }
+    public static boolean hasVanillaValue(ItemStack item)
+    {
+        return TagUtil.hasCustomValue(item, Tag.VANILLA.getTag());
+    }
 
     /**
      * Pass in an item to get a disabled version of it out. Disabled items should not be movable, droppable,
@@ -81,7 +85,7 @@ public class TagUtil
 
         ItemMeta meta = input.getItemMeta();
         meta.setLore(new ArrayList<>(Arrays.asList("", ChatColor.RED + "Disabled item")));
-        meta.getPersistentDataContainer().set(new NamespacedKey(Main.getMain(), Tag.DISABLED.getTag()), PersistentDataType.STRING, "disabled");
+        meta.getPersistentDataContainer().set(new NamespacedKey(Main.getMain(), Tag.DISABLED.getTag()), PersistentDataType.STRING, "arbitrary");
         ItemStack returner = ItemUtil.makeItem(input.getType(), input.getItemMeta().getDisplayName());
 
         returner.setItemMeta(meta);
@@ -95,7 +99,7 @@ public class TagUtil
 
         ItemMeta meta = input.getItemMeta();
         meta.setLore(new ArrayList<>(Arrays.asList(lore)));
-        meta.getPersistentDataContainer().set(new NamespacedKey(Main.getMain(), Tag.DISABLED.getTag()), PersistentDataType.STRING, "disabled");
+        meta.getPersistentDataContainer().set(new NamespacedKey(Main.getMain(), Tag.DISABLED.getTag()), PersistentDataType.STRING, "arbitrary");
         ItemStack returner = ItemUtil.makeItem(input.getType(), input.getItemMeta().getDisplayName());
 
         returner.setItemMeta(meta);
@@ -109,7 +113,7 @@ public class TagUtil
         if(input.getType() == Material.AIR || input.getItemMeta() == null) return new ItemStack(Material.STRUCTURE_VOID);
 
         ItemMeta meta = input.getItemMeta();
-        meta.getPersistentDataContainer().set(new NamespacedKey(Main.getMain(), Tag.DISABLED.getTag()), PersistentDataType.STRING, "disabled");
+        meta.getPersistentDataContainer().set(new NamespacedKey(Main.getMain(), Tag.DISABLED.getTag()), PersistentDataType.STRING, "arbitrary");
         meta.setHideTooltip(true);
         ItemStack returner = ItemUtil.makeItem(input.getType(), input.getItemMeta().getDisplayName());
 
@@ -124,11 +128,23 @@ public class TagUtil
     public static ItemStack tagUnplaceable(ItemStack input) {
         ItemMeta meta = input.getItemMeta();
 
-        meta.getPersistentDataContainer().set(new NamespacedKey(Main.getMain(), Tag.UNPLACEABLE.getTag()), PersistentDataType.STRING, "true");
+        meta.getPersistentDataContainer().set(new NamespacedKey(Main.getMain(), Tag.UNPLACEABLE.getTag()), PersistentDataType.STRING, "arbitrary");
 
         input.setItemMeta(meta);
         return input;
     }
+
+    // // Spawner mobs
+
+    public static void setSpawnerMob(Entity entity) {
+        entity.getPersistentDataContainer().set(new NamespacedKey(Main.getMain(), "spawner_mob"), PersistentDataType.STRING, "arbitrary");
+    }
+
+    public static boolean isNotSpawnerMob(Entity entity) {
+        return !entity.getPersistentDataContainer().has(new NamespacedKey(Main.getMain(), "spawner_mob"), PersistentDataType.STRING);
+    }
+
+    // // For later, secret project
 
     private static boolean hasBooleanTag(ItemStack item, String key) {
         return item.getItemMeta().getPersistentDataContainer().has(new NamespacedKey(Main.getMain(), key));
@@ -144,10 +160,4 @@ public class TagUtil
         return hasBooleanTag(item, Tag.ENCHANTABLE.getTag());
     }
 
-    public static void setSpawnerMob(Entity entity) {
-        entity.getPersistentDataContainer().set(new NamespacedKey(Main.getMain(), "spawner_mob"), PersistentDataType.STRING, "irrelevant");
-    }
-    public static boolean isNotSpawnerMob(Entity entity) {
-        return !entity.getPersistentDataContainer().has(new NamespacedKey(Main.getMain(), "spawner_mob"), PersistentDataType.STRING);
-    }
 }
