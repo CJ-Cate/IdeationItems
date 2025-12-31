@@ -87,6 +87,22 @@ public class ModifyVanillaEvents implements Listener {
         e.getBrokenItem().setItemMeta(m);
     }
 
+    @EventHandler
+    public void craftItemsUnbreakabley(PrepareItemCraftEvent e) {
+        ItemStack original = e.getRecipe().getResult();
+
+        if(!durableItems.contains(original.getType())) {
+            return;
+        }
+
+        ItemMeta meta = original.getItemMeta();
+        meta.setUnbreakable(true);
+        meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
+        original.setItemMeta(meta);
+
+        e.getInventory().setResult(original);
+    }
+
     // Disable elytras
     @EventHandler
     public void disableGliding(PlayerMoveEvent e)

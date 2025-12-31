@@ -46,12 +46,9 @@ public record Blueprint(ItemStack item, String value, Categories category, Recip
             m.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
         }
 
-        if(category != Categories.VANILLA) {
-            m.setCustomModelData(Math.abs(value.hashCode())); // has to be abs because custommodeldata cannot be set to negative values
-            m.getPersistentDataContainer().set(new NamespacedKey(Main.getMain(), TagUtil.Tag.CUSTOM.getTag()), PersistentDataType.STRING, value);
-        } else {
-            m.getPersistentDataContainer().set(new NamespacedKey(Main.getMain(), TagUtil.Tag.VANILLA.getTag()), PersistentDataType.STRING, value);
-        }
+        m.setCustomModelData(Math.abs(value.hashCode())); // has to be abs because custommodeldata cannot be set to negative values
+        m.getPersistentDataContainer().set(new NamespacedKey(Main.getMain(), TagUtil.Tag.CUSTOM.getTag()), PersistentDataType.STRING, value);
+
 
         item.setItemMeta(m);
 

@@ -15,7 +15,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -175,7 +174,7 @@ public class MallCommand implements Listener, CommandExecutor
     }
 
     private void giveItem(Player p, ItemStack item) {
-        if (!TagUtil.hasVanillaValue(item)) {
+        if (!TagUtil.hasVanillaCategory(item)) {
             p.getInventory().addItem(item);
         } else {
             ItemStack vanilla_item = new ItemStack(item.getType());

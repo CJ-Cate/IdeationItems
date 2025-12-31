@@ -1,6 +1,7 @@
 package io.github.cj_cate.ideationitems;
 
 import io.github.cj_cate.ideationitems.Commands.*;
+import io.github.cj_cate.ideationitems.Events.CraftingEvents;
 import io.github.cj_cate.ideationitems.Events.DisabledItemEvents;
 import io.github.cj_cate.ideationitems.Events.ModifyVanillaEvents;
 import io.github.cj_cate.ideationitems.Commands.InventoryRefresh;
@@ -114,6 +115,7 @@ public final class Main extends JavaPlugin {
         // The events created to disable certain vanilla game aspects. Opinionated, so go configure it. You probably want this.
         Bukkit.getPluginManager().registerEvents(new ModifyVanillaEvents(), this);
         Bukkit.getPluginManager().registerEvents(new DisabledItemEvents(), this);
+        Bukkit.getPluginManager().registerEvents(new CraftingEvents(), this);
 
 
         MallCommand mallCommand = new MallCommand();

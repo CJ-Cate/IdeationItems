@@ -1,5 +1,8 @@
 package io.github.cj_cate.ideationitems.Utils;
 
+import io.github.cj_cate.ideationitems.ItemMaps;
+import io.github.cj_cate.ideationitems.Items.Backend.Blueprint;
+import io.github.cj_cate.ideationitems.Items.Backend.Categories;
 import io.github.cj_cate.ideationitems.Main;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -53,12 +56,6 @@ public class TagUtil
         return item.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(Main.getMain(), key), PersistentDataType.STRING);
     }
 
-    public static String getVanillaCustomValue(ItemStack item)
-    {
-        return getCustomValue(item, Tag.VANILLA.getTag());
-    }
-
-
     public static boolean hasCustomValue(ItemStack item)
     {
         if(item == null || item.getItemMeta() == null) return false;
@@ -70,9 +67,17 @@ public class TagUtil
         if(item == null || item.getItemMeta() == null) return false;
         return item.getItemMeta().getPersistentDataContainer().has(new NamespacedKey(Main.getMain(), key), PersistentDataType.STRING);
     }
-    public static boolean hasVanillaValue(ItemStack item)
+    public static boolean hasVanillaCategory(ItemStack item)
     {
-        return TagUtil.hasCustomValue(item, Tag.VANILLA.getTag());
+        if(TagUtil.getCustomValue(item).equals("null")) {
+            return false;
+        }
+        Blueprint bloo = ItemMaps.getBlueprint(TagUtil.getCustomValue(item));
+        return hasVanillaCategory(bloo);
+    }
+
+    public static boolean hasVanillaCategory(Blueprint bloo) {
+        return bloo.category() == Categories.VANILLA;
     }
 
     /**

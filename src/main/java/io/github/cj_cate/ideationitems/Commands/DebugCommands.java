@@ -39,7 +39,6 @@ public class DebugCommands implements CommandExecutor {
 
             p.sendMessage("has custom: " + TagUtil.hasCustomValue(i));
             p.sendMessage("get custom: " + TagUtil.getCustomValue(i));
-            p.sendMessage("get vanilla: " + TagUtil.getVanillaCustomValue(i));
             p.sendMessage("disabled: " + TagUtil.isDisabled(i));
 //            p.sendMessage("droppable: " + i.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(main, "droppable"), PersistentDataType.STRING));
 //            p.sendMessage("moveable: " + i.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(main, "moveable"), PersistentDataType.STRING));

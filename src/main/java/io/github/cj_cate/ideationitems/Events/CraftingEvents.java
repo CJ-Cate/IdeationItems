@@ -1,6 +1,6 @@
 package io.github.cj_cate.ideationitems.Events;
 
-import io.github.cj_cate.ideationitems.Items.Backend.Categories;
+import io.github.cj_cate.ideationitems.Main;
 import io.github.cj_cate.ideationitems.Utils.TagUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -21,6 +21,8 @@ import org.bukkit.inventory.ItemStack;
  */
 public class CraftingEvents implements Listener {
 
+    // This stops you crafting vanilla items with custom items. You can still craft Categories.VANILLA items because
+    //   those items are not fully vanilla until they are brought into the game
     @EventHandler
     public void disbableCraftingWithCustomItems(PrepareItemCraftEvent e) {
         // very small chance need to check for repair item recipe. i will choose to ignore this because I dont want to test it. check the docs.
@@ -40,10 +42,10 @@ public class CraftingEvents implements Listener {
     // When a recipe is crafted in the crafting table (or similar) if it is a VANILLA category blueprint item, then
     //   when it is clicked out of the thing overwrite it with a true vanilla item
     @EventHandler
-    public void changeVanillaCraftingOutput(CraftItemEvent e) {
+    public void changeCustomVanillaCraftingOutput(PrepareItemCraftEvent e) {
         ItemStack original = e.getRecipe().getResult();
 
-        if(!TagUtil.hasVanillaValue(original)) {
+        if(!TagUtil.hasVanillaCategory(original)) {
             return;
         }
 
@@ -51,7 +53,6 @@ public class CraftingEvents implements Listener {
         modified.setAmount(original.getAmount());
 
         e.getInventory().setResult(modified);
-
     }
 
 
