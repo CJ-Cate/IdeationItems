@@ -6,7 +6,6 @@ import io.github.cj_cate.ideationitems.Items.Backend.ItemClass;
 import io.github.cj_cate.ideationitems.Items.Backend.RecipeStuffs.MaterialCarrier;
 import io.github.cj_cate.ideationitems.Items.Backend.RecipeStuffs.RecipeHolder;
 import io.github.cj_cate.ideationitems.Items.Backend.RecipeStuffs.RecipeType;
-import io.github.cj_cate.ideationitems.Main;
 import io.github.cj_cate.ideationitems.Utils.ItemUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;

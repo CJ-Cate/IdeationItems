@@ -1,9 +1,7 @@
 package io.github.cj_cate.ideationitems.Events;
 
-import io.github.cj_cate.ideationitems.Main;
 import io.github.cj_cate.ideationitems.Utils.TagUtil;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -14,7 +12,6 @@ import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.persistence.PersistentDataType;
 
 public class DisabledItemEvents implements Listener {
 

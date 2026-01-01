@@ -1,7 +1,7 @@
 package io.github.cj_cate.ideationitems.Items.Backend;
 
-import io.github.cj_cate.ideationitems.Events.ModifyVanillaEvents;
 import io.github.cj_cate.ideationitems.Commands.InventoryRefresh;
+import io.github.cj_cate.ideationitems.Events.ModifyVanillaEvents;
 import io.github.cj_cate.ideationitems.ItemMaps;
 import io.github.cj_cate.ideationitems.Items.Backend.InteractEffectClasses.InteractEffectHolder;
 import io.github.cj_cate.ideationitems.Items.Backend.RecipeStuffs.MaterialCarrier;

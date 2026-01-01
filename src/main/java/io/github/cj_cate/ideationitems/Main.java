@@ -4,7 +4,6 @@ import io.github.cj_cate.ideationitems.Commands.*;
 import io.github.cj_cate.ideationitems.Events.CraftingEvents;
 import io.github.cj_cate.ideationitems.Events.DisabledItemEvents;
 import io.github.cj_cate.ideationitems.Events.ModifyVanillaEvents;
-import io.github.cj_cate.ideationitems.Commands.InventoryRefresh;
 import io.github.cj_cate.ideationitems.Items.Backend.Blueprint;
 import io.github.cj_cate.ideationitems.Items.Backend.ItemClass;
 import io.github.cj_cate.ideationitems.Utils.JarPackageScanner;
