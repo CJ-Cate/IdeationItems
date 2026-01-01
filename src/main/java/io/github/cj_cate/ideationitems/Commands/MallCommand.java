@@ -151,6 +151,9 @@ public class MallCommand implements Listener, CommandExecutor
                 GetRecipeCommand.openRecipeMenu((Player) e.getWhoClicked(), e.getCurrentItem());
             }
             case SHIFT_LEFT -> {
+                if(!e.getWhoClicked().hasPermission("ideationitems.admin")) {
+                    return;
+                }
                 if(e.getSlot() > 53) return;
                 ItemStack item = e.getCurrentItem();
                 if(e.getCurrentItem().getAmount() != item.getAmount()) {
@@ -162,6 +165,9 @@ public class MallCommand implements Listener, CommandExecutor
                 giveItem((Player) e.getWhoClicked(), item);
             }
             case MIDDLE ->  {
+                if(!e.getWhoClicked().hasPermission("ideationitems.admin")) {
+                    return;
+                }
                 if(e.getSlot() > 53) return;
                 ItemStack item = e.getCurrentItem();
                 item.setAmount(item.getMaxStackSize());
