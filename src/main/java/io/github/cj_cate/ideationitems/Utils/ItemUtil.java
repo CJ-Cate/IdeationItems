@@ -24,14 +24,6 @@ public class ItemUtil
     // Simple static functions to ease the creation of creating items, when needed. Mostly for more
     //   complicated or cumbersome attributes
 
-    // So I dont fuck up the naming of something and spend hours debugging:
-//    public final static String unplaceable = "unplaceable";
-//    public final static String undroppable = "undroppable";
-//    public final static String unmoveable = "unmoveable";
-//    public final static String unpickupable = "unpickupable";
-
-
-
     public static ItemStack makeItem(Material material, String name)
     {
         ItemStack item = new ItemStack(material);

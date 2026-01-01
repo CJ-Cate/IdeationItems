@@ -13,7 +13,6 @@ public class GuiUtil
 
     public static final ItemStack turnRightItem = makePageArrow(Color.TEAL, "Turn Right");
     public static final ItemStack turnLeftItem = makePageArrow(Color.YELLOW, "Turn Left");
-    private static final ItemStack glass = TagUtil.tagDisabled(ItemUtil.makeItem(Material.LIME_STAINED_GLASS_PANE, " "), false);
 
 //    private static final ItemStack pane = ItemUtil.makeItem(Material.CYAN_STAINED_GLASS_PANE, "");
 //    private static final ItemStack deleter = ItemUtil.makeItem(Material.BARRIER, ChatColor.RED + "" + ChatColor.BOLD + "DELETE ITEM");
@@ -36,18 +35,11 @@ public class GuiUtil
         return Bukkit.createInventory(null, size_divisible_by_9, title);
     }
 
-    // domain: [0,27] ∈ Z
-    public static int borderedIndex27(int i_0_27) {
-        return 10 + i_0_27 + 2*(i_0_27 / 7);
-    }
-
-    // Kinda scuffed, because the 45 bordered index only has a bat on the bottom
-//    public static int borderedIndex45(int i_0_45) {
-//        return i_0_45 > 45 ? null : i_0_45;
-//    }
-
     public static void addGlass(Inventory inv) {
-        ItemStack glass = TagUtil.tagDisabled(ItemUtil.makeItem(Material.LIME_STAINED_GLASS_PANE, " "), false);
+        addGlass(inv, Material.LIME_STAINED_GLASS_PANE);
+    }
+    public static void addGlass(Inventory inv, Material material) {
+        ItemStack glass = TagUtil.tagDisabled(ItemUtil.makeItem(material, " "), false);
 
         // top and bottom rows
         for (int i = 0; i < 9; i++) {
@@ -62,6 +54,7 @@ public class GuiUtil
 
     }
 
+    private static final ItemStack glass = TagUtil.tagDisabled(ItemUtil.makeItem(Material.LIME_STAINED_GLASS_PANE, " "), false);
     public static void addGlassMinimal(Inventory inv) {
         for (int i = 0; i < 9; i++) {
             inv.setItem(i + 45, glass);

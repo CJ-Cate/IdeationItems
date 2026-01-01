@@ -253,7 +253,6 @@ public record Blueprint(ItemStack item, String value, Categories category, Recip
 
             // non-reflection based code used to actually put the items into the game
             try {
-                // APPARENTLY do not skip this if bloo.category()==Vanilla because KILL YOURSELF NOW!!!!!!!
                 ItemMaps.addToMap(bloo.value(), bloo);
             } catch(NullPointerException e ) {
                 Main.log("bloo is null after instantiation. refer to " + clazz.getSimpleName() + "/" + method.getName());
