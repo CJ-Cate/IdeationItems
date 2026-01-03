@@ -13,6 +13,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.*;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.components.CustomModelDataComponent;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.awt.*;
@@ -46,7 +47,11 @@ public record Blueprint(ItemStack item, String value, Categories category, Recip
             m.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
         }
 
-        m.setCustomModelData(Math.abs(value.hashCode())); // has to be abs because custommodeldata cannot be set to negative values
+        // 1.21.5+ way to set custom texture packs
+        CustomModelDataComponent component = m.getCustomModelDataComponent();
+        component.setStrings(List.of(value));
+        m.setCustomModelDataComponent(component); // has to be abs because custommodeldata cannot be set to negative values
+
         m.getPersistentDataContainer().set(new NamespacedKey(Main.getMain(), TagUtil.Tag.CUSTOM.getTag()), PersistentDataType.STRING, value);
 
 
