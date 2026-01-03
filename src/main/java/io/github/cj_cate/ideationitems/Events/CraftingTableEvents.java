@@ -22,7 +22,7 @@ import static io.github.cj_cate.ideationitems.Events.ModifyVanillaEvents.durable
 /**
  * Events related to the custom crafting system. Modify with caution, or probably not at all.
  */
-public class CraftingEvents implements Listener {
+public class CraftingTableEvents implements Listener {
 
     // This stops you crafting vanilla items with custom items. You can still craft Categories.VANILLA items because
     //   those items are not fully vanilla until they are brought into the game

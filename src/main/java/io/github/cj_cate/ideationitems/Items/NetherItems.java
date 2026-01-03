@@ -39,14 +39,14 @@ public class NetherItems extends ItemClass
         return new Blueprint(item, "blaze_dust", Categories.MATERIAL,
                 new RecipeHolder(
                         RecipeType.SHAPED_RECIPE,
-                        new String[]{ "ses",
-                                "fos",
-                                "ssn" },
+                        new String[]{"ses",
+                                     "fos",
+                                     "ssQ" },
                         new MaterialCarrier('s', Material.FLINT_AND_STEEL),
                         new MaterialCarrier('e', Material.ENDER_PEARL),
                         new MaterialCarrier('f', Material.FIRE_CHARGE),
                         new MaterialCarrier('o', Material.OBSIDIAN),
-                        new MaterialCarrier('n', Material.NETHERRACK)
+                        new MaterialCarrier('Q', Material.QUARTZ)
                 )
         );
     }
@@ -67,8 +67,8 @@ public class NetherItems extends ItemClass
         return new Blueprint(item, "vanilla_netherrack", Categories.VANILLA,
                 new RecipeHolder(RecipeType.SHAPED_RECIPE,
                         new String[]{"nnn",
-                                "nbn",
-                                "nnn"},
+                                     "nbn",
+                                     "nnn"},
                         new MaterialCarrier('n', Material.STONE),
                         new MaterialCarrier('b', Material.BLAZE_POWDER)
                 )
