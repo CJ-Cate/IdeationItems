@@ -42,20 +42,17 @@ public class CraftingTableEvents implements Listener {
         }
     }
 
-    // When a recipe is crafted in the crafting table (or similar) if it is a VANILLA category blueprint item, then
-    //   when it is clicked out of the thing overwrite it with a true vanilla item
+    /**
+     * If there is a vanilla item CATEGORY output, then change it with the true vanilla item.
+     */
     @EventHandler
     public void changeCustomVanillaCraftingOutput(PrepareItemCraftEvent e) {
-        ItemStack original = e.getRecipe().getResult();
-
-        if(!TagUtil.hasVanillaCategory(original)) {
-            return;
+        if(e.getRecipe() == null) return;
+        ItemStack result = e.getRecipe().getResult();
+        if(TagUtil.hasVanillaCategory(result)) {
+            ItemStack modified = new ItemStack(result.getType(), result.getAmount());
+            e.getInventory().setResult(modified);
         }
-
-        ItemStack modified = new ItemStack(original.getType());
-        modified.setAmount(original.getAmount());
-
-        e.getInventory().setResult(modified);
     }
 
     // needed for crafting vanilla stuffs

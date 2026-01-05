@@ -121,39 +121,40 @@ public class GetRecipeCommand implements CommandExecutor, Listener {
                     }
                 }
             }
-            // The following is not necessarily "clean" but its not strictly an abuse of code either.
-            // It could be simplified, but in general I am careful to keep the codebase in check.
-            case FURNACE_RECIPE -> {
-                addCraftingGlass(inv, Material.BLACK_STAINED_GLASS_PANE);
-                craftingIcon = ItemUtil.makeItem(Material.FURNACE, "Furnace",
+            //chatgpt optimization
+            case FURNACE_RECIPE, BLASTING_RECIPE, SMOKING_RECIPE, CAMPFIRE_RECIPE -> {
+                addCraftingGlass(inv, Material.GRAY_STAINED_GLASS_PANE);
+
+                Material iconMaterial = switch(recipeHolder.getRecipeType()) {
+                    case FURNACE_RECIPE -> Material.FURNACE;
+                    case BLASTING_RECIPE -> Material.BLAST_FURNACE;
+                    case SMOKING_RECIPE -> Material.SMOKER;
+                    case CAMPFIRE_RECIPE -> Material.CAMPFIRE;
+                    default -> throw new IllegalStateException("Unexpected recipe type");
+                };
+
+                String name = iconMaterial.name().replace("_", " ").toLowerCase();
+                String displayName = name.substring(0, 1).toUpperCase() + name.substring(1);
+
+                craftingIcon = ItemUtil.makeItem(iconMaterial, displayName,
                         List.of("Cooking time: " + recipeHolder.getCookingTime() / 20 + "s"));
-                iconSlot -= 1;
-                outputSlot -= 1;
+
+                iconSlot = 22; // 23 - 1
+                outputSlot = 24; // 25 - 1
                 inv.setItem(20, TagUtil.tagDisabled(getItemFromMaterialCarrier(recipeHolder.getSource())));
             }
-            case BLASTING_RECIPE -> {
+
+            case SMITHING_RECIPE -> {
                 addCraftingGlass(inv, Material.BLACK_STAINED_GLASS_PANE);
-                craftingIcon = ItemUtil.makeItem(Material.BLAST_FURNACE, "Blast Furnace",
-                        List.of("Cooking time: " + recipeHolder.getCookingTime() / 20 + "s"));
-                iconSlot -= 1;
-                outputSlot -= 1;
-                inv.setItem(20, TagUtil.tagDisabled(getItemFromMaterialCarrier(recipeHolder.getSource())));
-            }
-            case SMOKING_RECIPE -> {
-                addCraftingGlass(inv, Material.BLACK_STAINED_GLASS_PANE);
-                craftingIcon = ItemUtil.makeItem(Material.SMOKER, "Smoker",
-                        List.of("Cooking time: " + recipeHolder.getCookingTime() / 20 + "s"));
-                iconSlot -= 1;
-                outputSlot -= 1;
-                inv.setItem(20, TagUtil.tagDisabled(getItemFromMaterialCarrier(recipeHolder.getSource())));
-            }
-            case CAMPFIRE_RECIPE -> {
-                addCraftingGlass(inv, Material.BLACK_STAINED_GLASS_PANE);
-                craftingIcon = ItemUtil.makeItem(Material.CAMPFIRE, "Campfire",
-                        List.of("Cooking time: " + recipeHolder.getCookingTime() / 20 + "s"));
-                iconSlot -= 1;
-                outputSlot -= 1;
-                inv.setItem(20, TagUtil.tagDisabled(getItemFromMaterialCarrier(recipeHolder.getSource())));
+                int pattern_slot = 19;
+                inv.setItem(pattern_slot, TagUtil.tagDisabled(recipeHolder.getTemplateRecipeChoice().getRecipeChoice().getItemStack()));
+                int item_slot = 20;
+                inv.setItem(item_slot, TagUtil.tagDisabled(recipeHolder.getBase().getItemStack()));
+                int resource_slot = 21;
+                inv.setItem(resource_slot, TagUtil.tagDisabled(recipeHolder.getAddition().getRecipeChoice().getItemStack()));
+
+                craftingIcon = new ItemStack(Material.SMITHING_TABLE);
+
             }
 
             default -> {
