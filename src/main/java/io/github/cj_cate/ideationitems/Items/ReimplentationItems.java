@@ -42,13 +42,6 @@ public class ReimplentationItems extends ItemClass implements Listener
         rand = new Random();
     }
 
-    @EventHandler
-    public void goatDropMutton(EntityDeathEvent e) {
-        if(e.getEntityType() == EntityType.GOAT) {
-            e.getDrops().add(new ItemStack(Material.MUTTON, rand.nextInt(2)));
-        }
-    }
-
     public Blueprint makeVanillaChain() {
         return new Blueprint(new ItemStack(Material.IRON_CHAIN, 3), "vanilla_chain", Categories.VANILLA,
             new RecipeHolder(
@@ -60,6 +53,26 @@ public class ReimplentationItems extends ItemClass implements Listener
                 new MaterialCarrier('T', Material.IRON_INGOT)
             ));
     }
+
+
+    /*
+    // Without this implemented, the item is simply just simply uncraftable.
+    public Blueprint makeVanillaPoweredRail() {
+        return new Blueprint(new ItemStack(Material.POWERED_RAIL, 8), "vanilla_powered_rail", Categories.VANILLA,
+            new RecipeHolder(
+                RecipeType.SHAPED_RECIPE,
+                new String[]{
+                        "c c",
+                        "cSc",
+                        "crc"
+                },
+                new MaterialCarrier('c', Material.COPPER_INGOR),
+                new MaterialCarrier('S', Material.STICK),
+                new MaterialCarrier('r', Material.REDSTONE_DUST)
+            ));
+    }
+     */
+
 
 
 
