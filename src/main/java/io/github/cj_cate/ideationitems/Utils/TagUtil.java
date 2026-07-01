@@ -24,7 +24,8 @@ public class TagUtil
         ENCHANTABLE("enchantable"),
         ENCHANTED("enchanted"),
         CUSTOM("custom"),
-        VANILLA("vanilla");
+        VANILLA("vanilla"),
+        INSTANCE_DATA("instance_data");
 
         private final String enumTag;
 
@@ -62,10 +63,10 @@ public class TagUtil
         return item.getItemMeta().getPersistentDataContainer().has(new NamespacedKey(Main.getMain(), Tag.CUSTOM.getTag()), PersistentDataType.STRING);
     }
 
-    public static boolean hasCustomValue(ItemStack item, String key)
+    public static boolean hasCustomValueOf(ItemStack item, String key)
     {
-        if(item == null || item.getItemMeta() == null) return false;
-        return item.getItemMeta().getPersistentDataContainer().has(new NamespacedKey(Main.getMain(), key), PersistentDataType.STRING);
+        if(!hasCustomValue(item)) return false;
+        return item.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(Main.getMain(), Tag.CUSTOM.getTag()), PersistentDataType.STRING).equalsIgnoreCase(key);
     }
     public static boolean hasVanillaCategory(ItemStack item)
     {
@@ -127,7 +128,7 @@ public class TagUtil
     }
 
     public static boolean isDisabled(ItemStack item) {
-        return hasCustomValue(item, Tag.DISABLED.getTag());
+        return hasCustomValueOf(item, Tag.DISABLED.getTag());
     }
 
     public static ItemStack tagUnplaceable(ItemStack input) {

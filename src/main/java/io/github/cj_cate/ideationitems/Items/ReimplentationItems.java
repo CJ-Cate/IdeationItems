@@ -7,10 +7,7 @@ import io.github.cj_cate.ideationitems.Items.Backend.RecipeStuffs.MaterialCarrie
 import io.github.cj_cate.ideationitems.Items.Backend.RecipeStuffs.RecipeHolder;
 import io.github.cj_cate.ideationitems.Items.Backend.RecipeStuffs.RecipeType;
 import org.bukkit.Material;
-import org.bukkit.entity.EntityType;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -47,7 +44,9 @@ public class ReimplentationItems extends ItemClass implements Listener
             new RecipeHolder(
                 RecipeType.SHAPED_RECIPE,
                 new String[]{
-                        " i "," T "," i "
+                        " i ",
+                        " T ",
+                        " i "
                 },
                 new MaterialCarrier('i', Material.IRON_NUGGET),
                 new MaterialCarrier('T', Material.IRON_INGOT)

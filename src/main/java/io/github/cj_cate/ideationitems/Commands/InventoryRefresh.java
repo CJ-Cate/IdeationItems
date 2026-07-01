@@ -1,7 +1,8 @@
 package io.github.cj_cate.ideationitems.Commands;
 
-import io.github.cj_cate.ideationitems.Events.ModifyVanillaEvents;
+import io.github.cj_cate.ideationitems.Events.DisableDurabilityEvents;
 import io.github.cj_cate.ideationitems.ItemMaps;
+import io.github.cj_cate.ideationitems.Items.Backend.Blueprint;
 import io.github.cj_cate.ideationitems.Items.ReimplentationItems;
 import io.github.cj_cate.ideationitems.Main;
 import io.github.cj_cate.ideationitems.Utils.TagUtil;
@@ -44,7 +45,7 @@ public class InventoryRefresh implements CommandExecutor, Listener
                 recipe = recipeIterator.next();
                 if (recipe != null && ReimplentationItems.markToRemove.contains(recipe.getResult().getType())) {
                     recipeIterator.remove();
-                } else if (!TagUtil.hasCustomValue(recipe.getResult())) { 
+                } else if (!TagUtil.hasCustomValue(recipe.getResult())) {
                     addToEveryRecipeList(((Keyed) recipe).getKey());
                 }
             } while (recipeIterator.hasNext());
@@ -58,34 +59,59 @@ public class InventoryRefresh implements CommandExecutor, Listener
         {
             if(item == null) continue;
 
-            // Check to see if the item in question has a custom value and that it is not disabled
+            // Check to see if the item in question has a custom value and that it is not tagged disabled
             if(TagUtil.hasCustomValue(item) && !TagUtil.isDisabled(item))
             {
                 // So now we can check to see if the item we have stored internally is the same as the one they have
-                ItemStack updated_item;
-                try {
-                    updated_item = ItemMaps.getBlueprint(TagUtil.getCustomValue(item)).item();
-                } catch (NullPointerException e) {
+                Blueprint bloo = ItemMaps.getBlueprint(TagUtil.getCustomValue(item));
+                if(bloo == null) {
                     Main.log("IdeationItems/InventoryRefresh: Item '" + TagUtil.getCustomValue(item) + "' not found in your version of the plugin on player " + p.getName() + ". Skipping.");
                     continue;
                 }
+                ItemStack updated_item = bloo.item();
                 if(!(updated_item.isSimilar(item))) // We use .isSimilar() instead of .equals() to account for stack size
                 {
-                    // For loggin to the player
-                    items_updated_array.add(updated_item.getItemMeta().getDisplayName());
-                    items_old_array.add(item.getItemMeta().getDisplayName());
                     // Now we have confirmed that the item is a custom item but not the same as the one that we have stored,
                     //  therefore we can update it with these methods
 
-                    item.setItemMeta(updated_item.getItemMeta());
+                    ItemMeta new_meta;
+                    if(DisableDurabilityEvents.durabilityIsOn == false ||
+                            !(updated_item instanceof Damageable) ||
+                            !(item instanceof Damageable)) {
+                        new_meta = updated_item.getItemMeta();
+                    } else {
+                        // only accessible if both items are damageable and durability is toggled on
+                        Damageable damageable_updated_item_meta = (Damageable) updated_item.getItemMeta();
+                        damageable_updated_item_meta.setDamage(((Damageable) item.getItemMeta()).getDamage());
+                        new_meta = damageable_updated_item_meta;
+                    }
+
+                    // Carry over any registered per-instance state (e.g. a dyed color) from the player's
+                    // old item onto the freshly-templated meta, before we overwrite everything else.
+                    if(bloo.instanceData() != null) {
+                        bloo.instanceData().carryOver(item.getItemMeta(), new_meta);
+                    }
+
+                    // The carry-over above may have already accounted for the whole difference (e.g. a dyed
+                    // color surviving the refresh) - only report and apply the change if the item the player
+                    // would actually end up with still differs from what they have.
+                    ItemStack candidate = updated_item.clone();
+                    candidate.setItemMeta(new_meta);
+                    if(candidate.isSimilar(item)) continue;
+
+                    // For loggin to the player
+                    items_updated_array.add(updated_item.getItemMeta().getDisplayName());
+                    items_old_array.add(item.getItemMeta().getDisplayName());
+
                     item.setType(updated_item.getType());
+                    item.setItemMeta(new_meta);
                 }
             }
         }
 
         if(!items_updated_array.isEmpty())
         {
-            p.sendMessage(ChatColor.AQUA + "These items have been updated:");
+            p.sendMessage(ChatColor.AQUA + "IdeationItems: These items have been updated:");
             for (int i = 0; i < items_updated_array.size(); i++) {
                 p.sendMessage(ChatColor.AQUA + "$ " + items_old_array.get(i) + " -> " + items_updated_array.get(i));
             }
@@ -105,12 +131,15 @@ public class InventoryRefresh implements CommandExecutor, Listener
     }
 
     private void repairDurability(Player p) {
-        // this could be merged with refreshInventory(), but I am writing it separate for readability
+        if(DisableDurabilityEvents.durabilityIsOn == false) {
+            return;
+        }
+
         for(ItemStack i : p.getInventory().getContents())
         {
             if(i == null) continue;
 
-            if(i.getItemMeta() instanceof Damageable d && ModifyVanillaEvents.durableItems.contains(i.getType()))
+            if(i.getItemMeta() instanceof Damageable d && DisableDurabilityEvents.durabilityIsOn_and_MaterialInList(i.getType()))
             {
                 if(d.getDamage() != i.getType().getMaxDurability())
                 {

@@ -121,7 +121,6 @@ public class GetRecipeCommand implements CommandExecutor, Listener {
                     }
                 }
             }
-            //chatgpt optimization
             case FURNACE_RECIPE, BLASTING_RECIPE, SMOKING_RECIPE, CAMPFIRE_RECIPE -> {
                 addCraftingGlass(inv, Material.GRAY_STAINED_GLASS_PANE);
 
@@ -147,11 +146,11 @@ public class GetRecipeCommand implements CommandExecutor, Listener {
             case SMITHING_RECIPE -> {
                 addCraftingGlass(inv, Material.BLACK_STAINED_GLASS_PANE);
                 int pattern_slot = 19;
-                inv.setItem(pattern_slot, TagUtil.tagDisabled(recipeHolder.getTemplateRecipeChoice().getRecipeChoice().getItemStack()));
+                inv.setItem(pattern_slot, TagUtil.tagDisabled(recipeHolder.getTemplate().getItemStack()));
                 int item_slot = 20;
                 inv.setItem(item_slot, TagUtil.tagDisabled(recipeHolder.getBase().getItemStack()));
                 int resource_slot = 21;
-                inv.setItem(resource_slot, TagUtil.tagDisabled(recipeHolder.getAddition().getRecipeChoice().getItemStack()));
+                inv.setItem(resource_slot, TagUtil.tagDisabled(recipeHolder.getAddition().getItemStack()));
 
                 craftingIcon = new ItemStack(Material.SMITHING_TABLE);
 

@@ -24,10 +24,10 @@ public class ItemMaps {
             return null;
         }
     }
-    public static ItemStack getItem(String custom_value) { return blooMap.get(custom_value).item(); }
+    public static ItemStack getItem(String custom_value) { return blooMap.get(custom_value).item().clone(); }
     public static ItemStack getItem(String custom_value, int amount) {
         if(amount <= 0) throw new IllegalArgumentException("Cannot have invalid amount, reference ItemMaps!");
-        ItemStack item =  blooMap.get(custom_value).item();
+        ItemStack item = blooMap.get(custom_value).item().clone();
         item.setAmount(amount);
         return item;
     }

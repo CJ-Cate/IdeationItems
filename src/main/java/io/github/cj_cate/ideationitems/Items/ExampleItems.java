@@ -5,6 +5,9 @@ import io.github.cj_cate.ideationitems.Items.Backend.Categories;
 import io.github.cj_cate.ideationitems.Items.Backend.InteractEffectClasses.InteractEffect_EntityShootBowEvent;
 import io.github.cj_cate.ideationitems.Items.Backend.InteractEffectClasses.InteractEffect_PlayerInteractEntityEvent;
 import io.github.cj_cate.ideationitems.Items.Backend.InteractEffectClasses.InteractEffect_PlayerMoveEvent;
+import io.github.cj_cate.ideationitems.Items.Backend.InteractEffectClasses.InteractEffect_PlayerToggleSneakEvent;
+import io.github.cj_cate.ideationitems.Items.Backend.InstanceData.InstanceData;
+import io.github.cj_cate.ideationitems.Items.Backend.InstanceData.InstanceDataFields;
 import io.github.cj_cate.ideationitems.Items.Backend.ItemClass;
 import io.github.cj_cate.ideationitems.Items.Backend.RecipeStuffs.MaterialCarrier;
 import io.github.cj_cate.ideationitems.Items.Backend.RecipeStuffs.RecipeHolder;
@@ -14,9 +17,11 @@ import io.github.cj_cate.ideationitems.Utils.ItemUtil;
 import io.github.cj_cate.ideationitems.Utils.TagUtil;
 import org.bukkit.*;
 import org.bukkit.entity.Boat;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -29,12 +34,13 @@ public class ExampleItems extends ItemClass
 
     public Blueprint makeTransmutationshroom()
     {
+        String custom_value = "transmutation_mushroom";
         ItemStack item = ItemUtil.makeItem(Material.CRIMSON_FUNGUS, ChatColor.GREEN + "Transmutation Shrooom",
                 new ArrayList<>(List.of("Its all natrual, duddeeeee")));
 
         TagUtil.tagUnplaceable(item);
 
-        return new Blueprint(item, "transmutation_mushroom", Categories.UTILITY,
+        return new Blueprint(item, custom_value, Categories.UTILITY,
             new RecipeHolder(
                 RecipeType.SHAPELESS_RECIPE,
                 new MaterialCarrier(Material.PUFFERFISH),
@@ -44,13 +50,20 @@ public class ExampleItems extends ItemClass
                 new MaterialCarrier(Material.BONE_MEAL)
             ),
             new InteractEffect_PlayerInteractEntityEvent(e -> {
-                if(!e.getPlayer().getInventory().getItemInMainHand().isSimilar(item)) {
+                if(!TagUtil.hasCustomValueOf(e.getPlayer().getItemInUse(), custom_value)) {
                     return;
                 }
                 for(EntityType[] entityTypePool : entityPools)
                 {
                     if (!List.of(entityTypePool).contains(e.getRightClicked().getType())) {
                         continue;
+                    }
+
+                    // Maybe lets not transmutate peoples pets! On the other hand...
+                    Entity clicked_entity = e.getRightClicked();
+                    if (clicked_entity.getCustomName() != null && clicked_entity.isCustomNameVisible()) {
+                        e.setCancelled(true);
+                        e.getPlayer().sendMessage(ChatColor.RED + "You monster!");
                     }
 
                     Location entity_spawn_location = e.getRightClicked().getLocation();
@@ -77,13 +90,14 @@ public class ExampleItems extends ItemClass
 
     public Blueprint getStormcaller()
     {
+        String custom_value = "stormcall_bow";
         ItemStack item = ItemUtil.makeItem(Material.BOW, ChatColor.DARK_AQUA + "" + ChatColor.BOLD + "Stormcaller Bow",
             new ArrayList<>(Arrays.asList(
                 "A single shot of this bow",
                 "is enough to make the heavens cry"
             )));
 
-        return new Blueprint(item, "stormcall_bow", Categories.UTILITY,
+        return new Blueprint(item, custom_value, Categories.UTILITY,
                 new RecipeHolder(
                     RecipeType.SHAPED_RECIPE,
                     new String[]{
@@ -96,8 +110,7 @@ public class ExampleItems extends ItemClass
                     new MaterialCarrier('S', Material.STRING)
                 ),
             new InteractEffect_EntityShootBowEvent(e -> {
-//                    if(ItemUtil.)
-                if(!(e.getBow() != null && e.getBow().isSimilar(item))) {
+                if(!TagUtil.hasCustomValueOf(e.getBow(), custom_value)) {
                     return;
                 }
                 double startingY = e.getEntity().getLocation().getY();
@@ -160,6 +173,37 @@ public class ExampleItems extends ItemClass
                     }
                 }
             }));
+    }
+
+    // Colors cycle in this order and loop back around to red
+    private final Color[] rainbowColors = {
+        Color.RED, Color.ORANGE, Color.YELLOW, Color.GREEN, Color.BLUE, Color.PURPLE
+    };
+
+    public Blueprint getMagicalPants() {
+        ItemStack item = ItemUtil.makeItem(Material.LEATHER_LEGGINGS, "Magical Pants");
+        LeatherArmorMeta meta = (LeatherArmorMeta) item.getItemMeta();
+        meta.setColor(rainbowColors[0]);
+        item.setItemMeta(meta);
+
+        String custom_value = "magical_pants";
+        InstanceData instanceData = new InstanceData(InstanceDataFields.LEATHER_COLOR);
+
+        return new Blueprint(item, custom_value, Categories.ARMOR, null, instanceData,
+            new InteractEffect_PlayerToggleSneakEvent(e -> {
+                if(!e.isSneaking()) return;
+                if(e.getPlayer().getInventory().getLeggings() == null) return;
+                ItemStack leggings = e.getPlayer().getInventory().getLeggings();
+                if(!TagUtil.hasCustomValueOf(leggings, custom_value)) return;
+
+                LeatherArmorMeta leggingsMeta = (LeatherArmorMeta) leggings.getItemMeta();
+                int currentIndex = Arrays.asList(rainbowColors).indexOf(leggingsMeta.getColor());
+                Color nextColor = rainbowColors[(currentIndex + 1) % rainbowColors.length];
+
+                instanceData.set(leggings, InstanceDataFields.LEATHER_COLOR, nextColor);
+                e.getPlayer().getInventory().setLeggings(leggings);
+            })
+        );
     }
 
 

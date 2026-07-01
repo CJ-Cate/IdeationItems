@@ -13,11 +13,9 @@ import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
-import static io.github.cj_cate.ideationitems.Events.ModifyVanillaEvents.durableItems;
+import static io.github.cj_cate.ideationitems.Events.DisableDurabilityEvents.setUnbreakable;
 
 /**
  * Events related to the custom crafting system. Modify with caution, or probably not at all.
@@ -58,11 +56,8 @@ public class CraftingTableEvents implements Listener {
     // needed for crafting vanilla stuffs
     @EventHandler
     public void playerCraftBreakableItem(CraftItemEvent e) {
-        if(durableItems.contains(e.getCurrentItem().getType())) {
-            ItemMeta m = e.getCurrentItem().getItemMeta();
-            m.setUnbreakable(true);
-            m.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
-            e.getCurrentItem().setItemMeta(m);
+        if(DisableDurabilityEvents.durabilityIsOn_and_MaterialInList(e.getCurrentItem().getType())) {
+            setUnbreakable(e.getCurrentItem());
         }
     }
 

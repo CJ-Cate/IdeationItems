@@ -6,6 +6,7 @@ import io.github.cj_cate.ideationitems.Items.Backend.Categories;
 import io.github.cj_cate.ideationitems.Items.Backend.InteractEffectClasses.InteractEffect_PlayerToggleSneakEvent;
 import io.github.cj_cate.ideationitems.Items.Backend.ItemClass;
 import io.github.cj_cate.ideationitems.Utils.ItemUtil;
+import io.github.cj_cate.ideationitems.Utils.TagUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -22,13 +23,14 @@ public class ExampleMobSpawning extends ItemClass
     // Mob-spawning Shield item
     public Blueprint makeAegis()
     {
+        String custom_value = "aegis_shield";
         ItemStack item = ItemUtil.makeItem(Material.SHIELD, ChatColor.GOLD + "" + ChatColor.BOLD + "Aegis",
             new ArrayList<>(Arrays.asList(
                 ChatColor.AQUA + "The legendary shield",
                 ChatColor.AQUA + "of the ancient greeks"
             )));
 
-        return new Blueprint(item, "aegis_shield", Categories.ARMOR,
+        return new Blueprint(item, custom_value, Categories.ARMOR,
             null, // Because this recipe is commented out, it is not accessible in-game by default
             /*new RecipeHolder(
                     RecipeType.SHAPED_RECIPE,
@@ -42,7 +44,8 @@ public class ExampleMobSpawning extends ItemClass
             new InteractEffect_PlayerToggleSneakEvent(e -> {
                 if(e.isSneaking() &&
                     e.getPlayer().isBlocking() &&
-                    e.getPlayer().getInventory().getItemInOffHand().isSimilar(item))
+                        TagUtil.hasCustomValueOf(e.getPlayer().getInventory().getItemInOffHand(), custom_value)
+                    )
                 {
                     double radius = 2.0d; //radius (in blocks) to spread golems from the player
                     int amount = 5; //amount of dummy golems to spawn

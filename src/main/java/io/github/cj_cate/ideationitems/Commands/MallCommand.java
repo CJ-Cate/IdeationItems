@@ -180,6 +180,7 @@ public class MallCommand implements Listener, CommandExecutor
     }
 
     private void giveItem(Player p, ItemStack item) {
+        item = item.clone();
         if (!TagUtil.hasVanillaCategory(item)) {
             p.getInventory().addItem(item);
         } else {
@@ -195,7 +196,7 @@ public class MallCommand implements Listener, CommandExecutor
             if(book[player_page][i].equals(bair)) {
                 inv.setItem(i, air);
             } else {
-                inv.setItem(i, book[player_page][i].item());
+                inv.setItem(i, book[player_page][i].item().clone());
             }
         }
     }

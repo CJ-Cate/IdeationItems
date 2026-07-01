@@ -101,8 +101,6 @@ public final class Main extends JavaPlugin {
             throw new RuntimeException(e);
         }
 
-//        new ScoreboardUtil(); // for appy appy constructor mefod :3
-
         // //
         // // Event Registering starts here
         // // IMPORTANT: Events that are in an ItemClass are automatically registered. Don't double-register them!

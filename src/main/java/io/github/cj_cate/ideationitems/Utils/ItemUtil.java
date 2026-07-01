@@ -30,7 +30,6 @@ public class ItemUtil
 
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.RESET + name);
-        meta.setUnbreakable(true);
 
         item.setItemMeta(meta);
         return item;
@@ -196,7 +195,6 @@ public class ItemUtil
         meta.setHideTooltip(false);
 
         if(effect != null) {
-            // I dont know what 'b:true' is. Ambient? I guess keep it true?
             meta.addCustomEffect(new PotionEffect(effect, seconds*20, amplifier), true);
         }
 

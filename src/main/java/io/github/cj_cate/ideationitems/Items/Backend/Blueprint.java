@@ -1,8 +1,9 @@
 package io.github.cj_cate.ideationitems.Items.Backend;
 
 import io.github.cj_cate.ideationitems.Commands.InventoryRefresh;
-import io.github.cj_cate.ideationitems.Events.ModifyVanillaEvents;
+import io.github.cj_cate.ideationitems.Events.DisableDurabilityEvents;
 import io.github.cj_cate.ideationitems.ItemMaps;
+import io.github.cj_cate.ideationitems.Items.Backend.InstanceData.InstanceData;
 import io.github.cj_cate.ideationitems.Items.Backend.InteractEffectClasses.InteractEffectHolder;
 import io.github.cj_cate.ideationitems.Items.Backend.RecipeStuffs.MaterialCarrier;
 import io.github.cj_cate.ideationitems.Items.Backend.RecipeStuffs.RecipeHolder;
@@ -36,15 +37,42 @@ import java.util.List;
 **/
 
 @SuppressWarnings("varargs")
-public record Blueprint(ItemStack item, String value, Categories category, RecipeHolder recipe, InteractEffectHolder... consumers)
+public class Blueprint
 {
-    public Blueprint
-    {
+    private ItemStack item;
+    public ItemStack item() { return item; }
+    private String value;
+    public String value() { return value; }
+    private Categories category;
+    public Categories category() { return category; }
+    private RecipeHolder recipe;
+    public RecipeHolder recipe() { return recipe; }
+    private InteractEffectHolder[] consumers = null;
+    public InteractEffectHolder[] consumers() { return consumers; }
+
+    private InstanceData instanceData;
+    public InstanceData instanceData() { return instanceData; }
+
+
+    // Existing signature kept as-is for every current call site; delegates with no instance data.
+    public Blueprint(ItemStack item, String value, Categories category, RecipeHolder recipe, InteractEffectHolder... consumers) {
+        this(item, value, category, recipe, null, consumers);
+    }
+
+    public Blueprint(ItemStack item, String value, Categories category, RecipeHolder recipe, InstanceData instanceData, InteractEffectHolder... consumers) {
+
+        this.item = item;
+        this.value = value;
+        this.category = category;
+        this.recipe = recipe;
+        this.instanceData = instanceData;
+        this.consumers = consumers;
+
+
         ItemMeta m = item.getItemMeta();
 
-        if(ModifyVanillaEvents.durableItems.contains(item.getType())){
-            m.setUnbreakable(true);
-            m.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
+        if(DisableDurabilityEvents.durabilityIsOn_and_MaterialInList(item.getType())){
+            DisableDurabilityEvents.setUnbreakable(item);
         }
 
         // 1.21.5+ way to set custom texture packs
@@ -54,6 +82,9 @@ public record Blueprint(ItemStack item, String value, Categories category, Recip
 
         m.getPersistentDataContainer().set(new NamespacedKey(Main.getMain(), TagUtil.Tag.CUSTOM.getTag()), PersistentDataType.STRING, value);
 
+        if(instanceData != null) {
+            instanceData.applyDefaults(m);
+        }
 
         item.setItemMeta(m);
 

@@ -19,7 +19,7 @@ public class DisabledItemEvents implements Listener {
     @EventHandler
     public void placeItem(BlockPlaceEvent e)
     {
-        if(TagUtil.hasCustomValue(e.getItemInHand(), TagUtil.Tag.UNPLACEABLE.getTag()))
+        if(TagUtil.hasCustomValueOf(e.getItemInHand(), TagUtil.Tag.UNPLACEABLE.getTag()))
         {
             e.setCancelled(true);
         }
