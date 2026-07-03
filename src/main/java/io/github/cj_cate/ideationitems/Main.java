@@ -162,14 +162,6 @@ public final class Main extends JavaPlugin {
         // Get the recipe for an item without going through the mall
         getCommand("getrecipe").setExecutor(getRecipeCommand);
 
-        // //
-        // // Extension point for downstream plugins that reuse this class as their plugin.yml main
-        // // (see PluginExtension.java / CLAUDE.md). Runs after all core registration is done.
-        // //
-        for (PluginExtension extension : ServiceLoader.load(PluginExtension.class, getClassLoader())) {
-            extension.onEnable(this);
-        }
-
     }
 
     @Override

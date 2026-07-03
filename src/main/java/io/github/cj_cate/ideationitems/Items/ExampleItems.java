@@ -42,7 +42,9 @@ public class ExampleItems extends ItemClass
 
         return new Blueprint(item, custom_value, Categories.UTILITY,
             new RecipeHolder(
-                RecipeType.SHAPELESS_RECIPE,
+                RecipeType.SHAPELESS_RECIPE_SIZES,
+                // amounts, aligned 1:1 with the MaterialCarriers below
+                new int[]{2, 2, 1, 1, 1},
                 new MaterialCarrier(Material.PUFFERFISH),
                 new MaterialCarrier(Material.RED_MUSHROOM),
                 new MaterialCarrier(Material.APPLE),
@@ -208,5 +210,17 @@ public class ExampleItems extends ItemClass
         );
     }
 
+    public Blueprint getWoodApple() {
+        ItemStack item = ItemUtil.makeItem(Material.APPLE, "Wood Apple");
+        String custom_value = "wooden_apple";
+        return new Blueprint(item, custom_value, Categories.MISC,
+                new RecipeHolder(
+                       RecipeType.SHAPED_RECIPE_SIZES,
+                       new String[]{"www","www","www"},
+                       new int[]{2,2,2,2,2,2,2,2,2},
+                       new MaterialCarrier('w', Material.OAK_PLANKS)
+                ),
+                null);
+    }
 
 }

@@ -95,6 +95,7 @@ public class TagUtil
         ItemStack returner = ItemUtil.makeItem(input.getType(), input.getItemMeta().getDisplayName());
 
         returner.setItemMeta(meta);
+        returner.setAmount(input.getAmount());
         return returner;
     }
 
@@ -109,6 +110,7 @@ public class TagUtil
         ItemStack returner = ItemUtil.makeItem(input.getType(), input.getItemMeta().getDisplayName());
 
         returner.setItemMeta(meta);
+        returner.setAmount(input.getAmount());
         return returner;
     }
 
@@ -124,6 +126,7 @@ public class TagUtil
         ItemStack returner = ItemUtil.makeItem(input.getType(), input.getItemMeta().getDisplayName());
 
         returner.setItemMeta(meta);
+        returner.setAmount(input.getAmount());
         return returner;
     }
 

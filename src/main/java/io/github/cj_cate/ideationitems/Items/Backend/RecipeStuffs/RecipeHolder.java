@@ -87,6 +87,19 @@ public class RecipeHolder
         materialCarrierArrayList.addAll(Arrays.asList(materialCarriers));
     }
 
+    /**
+     * Shapeless recipes with per-ingredient counts. amounts[i] is how many of materialCarriers[i] are
+     * required (and consumed) - e.g. amounts = {2, 1} with materialCarriers = {stick, feather} needs
+     * 2 sticks and 1 feather anywhere in the grid. Natively supported by vanilla shapeless matching, so
+     * unlike SHAPED_RECIPE_SIZES this needs no extra event handling; the grid just has to fit the total
+     * (max 9 items across all ingredients).
+     */
+    public RecipeHolder(RecipeType recipeType_shapelessRecipeSize, int[] amounts, MaterialCarrier... materialCarriers) {
+        this.recipeType = recipeType_shapelessRecipeSize;
+        this.amounts = amounts;
+        materialCarrierArrayList.addAll(Arrays.asList(materialCarriers));
+    }
+
     public ArrayList<MaterialCarrier> getMaterialCarrierArrayList() {
         return materialCarrierArrayList;
     }

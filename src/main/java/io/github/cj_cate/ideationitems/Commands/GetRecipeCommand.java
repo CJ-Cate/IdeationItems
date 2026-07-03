@@ -4,6 +4,7 @@ import io.github.cj_cate.ideationitems.ItemMaps;
 import io.github.cj_cate.ideationitems.Items.Backend.Blueprint;
 import io.github.cj_cate.ideationitems.Items.Backend.RecipeStuffs.MaterialCarrier;
 import io.github.cj_cate.ideationitems.Items.Backend.RecipeStuffs.RecipeHolder;
+import io.github.cj_cate.ideationitems.Items.Backend.RecipeStuffs.RecipeType;
 import io.github.cj_cate.ideationitems.Utils.GuiUtil;
 import io.github.cj_cate.ideationitems.Utils.ItemUtil;
 import io.github.cj_cate.ideationitems.Utils.TagUtil;
@@ -63,8 +64,9 @@ public class GetRecipeCommand implements CommandExecutor, Listener {
 
         // For each type of recipe, go through and change the format for the page
         switch(recipeHolder.getRecipeType()) {
-            case SHAPED_RECIPE -> {
+            case SHAPED_RECIPE, SHAPED_RECIPE_SIZES -> {
                 String[] ra = recipeHolder.getRecipeArray();
+                boolean hasAmounts = recipeHolder.getRecipeType() == RecipeType.SHAPED_RECIPE_SIZES;
                 craftingIcon = new ItemStack(Material.CRAFTING_TABLE);
                 addCraftingGlass(inv, Material.BROWN_STAINED_GLASS_PANE);
 
@@ -87,12 +89,15 @@ public class GetRecipeCommand implements CommandExecutor, Listener {
                     ca = ra[i].toCharArray();
                     for (int j = 0; j < 3; j++) {
                         if(ca[j] != ' ') {
-                            inv.setItem(i*9 + j + 10, TagUtil.tagDisabled(map.get(ca[j])));
+                            ItemStack viewItem = map.get(ca[j]).clone();
+                            if(hasAmounts) viewItem.setAmount(recipeHolder.getAmounts()[i*3 + j]);
+                            inv.setItem(i*9 + j + 10, TagUtil.tagDisabled(viewItem));
                         }
                     }
                 }
             }
-            case SHAPELESS_RECIPE -> {
+            case SHAPELESS_RECIPE, SHAPELESS_RECIPE_SIZES -> {
+                boolean hasAmounts = recipeHolder.getRecipeType() == RecipeType.SHAPELESS_RECIPE_SIZES;
                 craftingIcon = new ItemStack(Material.CRAFTING_TABLE);
                 addCraftingGlass(inv, Material.BROWN_STAINED_GLASS_PANE);
 
@@ -106,7 +111,9 @@ public class GetRecipeCommand implements CommandExecutor, Listener {
                 ItemStack infosign = ItemUtil.makeItem(Material.OAK_SIGN, net.md_5.bungee.api.ChatColor.YELLOW + "Info",
                         List.of("This recipe is shapeless :3"));
 
-                inv.setItem(14, TagUtil.tagDisabled(infosign));
+                // tagDisabled(ItemStack) alone overwrites lore with "Disabled item" - use the lore-preserving
+                // overload here so the sign's actual message survives.
+                inv.setItem(14, TagUtil.tagDisabled(infosign, "This recipe is shapeless :3"));
 
                 for (int i = 0; i < 3; i++) {
                     for (int j = 0; j < 3; j++) {
@@ -115,7 +122,8 @@ public class GetRecipeCommand implements CommandExecutor, Listener {
                             break;
                         }
 
-                        ItemStack viewitem = getItemFromMaterialCarrier(recipeHolder.getMaterialCarrierArrayList().get(i*3 + j));
+                        ItemStack viewitem = getItemFromMaterialCarrier(recipeHolder.getMaterialCarrierArrayList().get(i*3 + j)).clone();
+                        if(hasAmounts) viewitem.setAmount(recipeHolder.getAmounts()[i*3 + j]);
                         inv.setItem(i*9 + j + 10, TagUtil.tagDisabled(viewitem));
                     }
                 }
@@ -196,6 +204,7 @@ public class GetRecipeCommand implements CommandExecutor, Listener {
     @EventHandler
     public void onClickBackArrow(InventoryClickEvent e) {
         if(!e.getView().getTitle().equalsIgnoreCase("Recipe Preview")) return;
+        if(e.getCurrentItem() == null) return;
         if(e.getCurrentItem().getItemMeta().getDisplayName().contains("Back")) {
             Player p = (Player) e.getWhoClicked();
             p.performCommand("mall");
