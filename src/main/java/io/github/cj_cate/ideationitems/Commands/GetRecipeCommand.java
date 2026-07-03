@@ -105,9 +105,8 @@ public class GetRecipeCommand implements CommandExecutor, Listener {
 
                 ItemStack infosign = ItemUtil.makeItem(Material.OAK_SIGN, net.md_5.bungee.api.ChatColor.YELLOW + "Info",
                         List.of("This recipe is shapeless :3"));
-                TagUtil.tagDisabled(infosign);
 
-                inv.setItem(14, infosign);
+                inv.setItem(14, TagUtil.tagDisabled(infosign));
 
                 for (int i = 0; i < 3; i++) {
                     for (int j = 0; j < 3; j++) {
