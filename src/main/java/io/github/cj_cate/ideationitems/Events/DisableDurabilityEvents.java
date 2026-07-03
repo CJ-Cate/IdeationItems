@@ -80,6 +80,7 @@ public class DisableDurabilityEvents implements Listener {
 
     @EventHandler
     public void craftItemsUnbreakabley(PrepareItemCraftEvent e) {
+        if(e.getRecipe() == null) return;
         ItemStack result = e.getRecipe().getResult();
 
         if(durabilityIsOn_and_MaterialInList(result.getType())) {
