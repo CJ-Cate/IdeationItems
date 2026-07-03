@@ -5,12 +5,16 @@ import io.github.cj_cate.ideationitems.Events.DisableDurabilityEvents;
 import io.github.cj_cate.ideationitems.ItemMaps;
 import io.github.cj_cate.ideationitems.Items.Backend.InstanceData.InstanceData;
 import io.github.cj_cate.ideationitems.Items.Backend.InteractEffectClasses.InteractEffectHolder;
+import io.github.cj_cate.ideationitems.Items.Backend.InteractEffectClasses.InteractEffect_CraftItemEvent;
+import io.github.cj_cate.ideationitems.Items.Backend.InteractEffectClasses.InteractEffect_PrepareItemCraftEvent;
 import io.github.cj_cate.ideationitems.Items.Backend.RecipeStuffs.MaterialCarrier;
 import io.github.cj_cate.ideationitems.Items.Backend.RecipeStuffs.RecipeHolder;
 import io.github.cj_cate.ideationitems.Main;
 import io.github.cj_cate.ideationitems.Utils.TagUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.*;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -24,6 +28,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.BiFunction;
 
 /**
  * This class is used to store an ItemStack and its corresponding Key that will be used in the
@@ -129,42 +135,78 @@ public class Blueprint
                 }
             }
 
-//            case SHAPED_RECIPE_SIZES -> {
-//                // matching logic to SHAPED_RECIPE
-//                ShapedRecipe sr = new ShapedRecipe(key, item);
-//
-//                for(MaterialCarrier materialCarrier : recipe.getMaterialCarrierArrayList())
-//                {
-//                    sr.setIngredient(materialCarrier.getKey(), materialCarrier.getRecipeChoice());
-//                }
-//
-//                InteractEffectHolder prepare_event = new InteractEffect_PrepareItemCraftEvent(e -> {
-//
-//                    if(e.getRecipe() == null) return;
-//                    if(e.getInventory().getResult() != item) return;
-//
-//                    ItemStack[] matrix = e.getInventory().getMatrix();
-//                    for (int i = 0; i < matrix.length; i++) {
-//                        if(matrix[i].getAmount() != recipe.getAmounts()[i]) {
-//                            e.getInventory().setResult(new ItemStack(Material.AIR));
-//                            return;
-//                        }
-//                    }
-//                });
-//                Bukkit.getPluginManager().registerEvents((Listener) prepare_event, Main.getMain());
-//
-//                for (String[] pattern : getAllPatterns(recipe.getRecipeArray())) {
-//                    sr.shape(pattern[0], pattern[1], pattern[2]);
-//                    Bukkit.addRecipe(sr);
-//                }
-//
-//            }
-            // next: inventory click event to remove the amount of items for the thing
+            // Vanilla shaped recipes only ever check for presence (1 item) per slot, and only ever consume 1
+            // per slot per craft. amounts[i] (indexed by grid position, row-major 0..8) lets a slot require and
+            // consume more than 1 - nothing about that is natively supported, so it needs two event hooks on
+            // top of the plain recipe registration below. Unlike SHAPED_RECIPE this doesn't auto-generate every
+            // shifted position, since amounts is pinned to one specific placement in the grid.
+            case SHAPED_RECIPE_SIZES -> {
+                String[] pattern = recipe.getRecipeArray();
+                ShapedRecipe sr = new ShapedRecipe(key, item);
+                sr.shape(pattern[0], pattern[1], pattern[2]);
+
+                for(MaterialCarrier materialCarrier : recipe.getMaterialCarrierArrayList()) {
+                    try {
+                        sr.setIngredient(materialCarrier.getKey(), materialCarrier.getRecipeChoice());
+                    } catch (IllegalArgumentException e) {
+                        Main.log("Error with: " + key.getKey());
+                        e.printStackTrace();
+                    }
+                }
+
+                if(bloo.category() != Categories.SECRET) {
+                    InventoryRefresh.addToEveryRecipeList(key);
+                }
+                Bukkit.addRecipe(sr);
+
+                int[] amounts = recipe.getAmounts();
+
+                // Hide the result in the preview until every slot has enough stock to actually pay for the craft.
+                Bukkit.getPluginManager().registerEvents((Listener) new InteractEffect_PrepareItemCraftEvent(e -> {
+                    if(e.getRecipe() == null || !TagUtil.hasCustomValueOf(e.getRecipe().getResult(), bloo.value())) return;
+
+                    ItemStack[] matrix = e.getInventory().getMatrix();
+                    for (int i = 0; i < matrix.length; i++) {
+                        if(matrix[i] != null && matrix[i].getAmount() < amounts[i]) {
+                            e.getInventory().setResult(new ItemStack(Material.AIR));
+                            return;
+                        }
+                    }
+                }), Main.getMain());
+
+                registerExtraAmountConsumption(bloo, (i, slotItem) -> amounts[i]);
+            }
 
             case SHAPELESS_RECIPE -> {
                 ShapelessRecipe sr = new ShapelessRecipe(key, item);
                 recipe.getMaterialCarrierArrayList().forEach(i -> sr.addIngredient(i.getRecipeChoice()) );
                 Bukkit.addRecipe(sr);
+            }
+
+            // Vanilla shapeless matching only ever needs 1 of each listed ingredient, and satisfies a repeated
+            // ingredient by spreading it across separate grid slots - it can't express "one slot needs 2 of the
+            // same item stacked together", which is what a player naturally expects "requires 2 X" to mean. So
+            // this registers a plain 1-of-each shapeless recipe and, like SHAPED_RECIPE_SIZES, layers the same
+            // per-slot amount gate/consumption on top, matching a slot back to its ingredient via RecipeChoice#test.
+            case SHAPELESS_RECIPE_SIZES -> {
+                ShapelessRecipe sr = new ShapelessRecipe(key, item);
+                recipe.getMaterialCarrierArrayList().forEach(mc -> sr.addIngredient(mc.getRecipeChoice()));
+                Bukkit.addRecipe(sr);
+
+                Bukkit.getPluginManager().registerEvents((Listener) new InteractEffect_PrepareItemCraftEvent(e -> {
+                    if(e.getRecipe() == null || !TagUtil.hasCustomValueOf(e.getRecipe().getResult(), bloo.value())) return;
+
+                    for (ItemStack slot : e.getInventory().getMatrix()) {
+                        if(slot == null) continue;
+                        Integer required = requiredAmountForSlot(recipe, slot);
+                        if(required != null && slot.getAmount() < required) {
+                            e.getInventory().setResult(new ItemStack(Material.AIR));
+                            return;
+                        }
+                    }
+                }), Main.getMain());
+
+                registerExtraAmountConsumption(bloo, (i, slotItem) -> requiredAmountForSlot(recipe, slotItem));
             }
 
             case SMITHING_RECIPE -> Bukkit.addRecipe(new SmithingTransformRecipe(key, item, recipe.getTemplate(),recipe.getBase(), recipe.getAddition()));
@@ -177,6 +219,113 @@ public class Blueprint
             case CAMPFIRE_RECIPE -> Bukkit.addRecipe(    new CampfireRecipe(    key, item, recipe.getSource().getRecipeChoice(), 0, recipe.getCookingTime()));
 
             default -> throw new IllegalArgumentException("(custom) there is an incorrect recipe type enum thingy!");
+        }
+    }
+
+    // Maps a crafting-grid slot back to the MaterialCarrier (and thus required amount) it satisfies -
+    // shapeless recipes have no positional chars to index amounts by, unlike shaped ones.
+    private static Integer requiredAmountForSlot(RecipeHolder recipe, ItemStack slotItem) {
+        List<MaterialCarrier> carriers = recipe.getMaterialCarrierArrayList();
+        int[] amounts = recipe.getAmounts();
+        for (int i = 0; i < carriers.size(); i++) {
+            if (carriers.get(i).getRecipeChoice().test(slotItem)) {
+                return amounts[i];
+            }
+        }
+        return null;
+    }
+
+    // Consumes the "extra" (beyond vanilla's own 1-per-slot) amount a *_SIZES recipe requires. requiredAmountFor
+    // maps (matrix slot index, that slot's item) to the total amount required there; null or <=1 skips it.
+    private static void registerExtraAmountConsumption(Blueprint bloo, BiFunction<Integer, ItemStack, Integer> requiredAmountFor) {
+        Bukkit.getPluginManager().registerEvents((Listener) new InteractEffect_CraftItemEvent(e -> {
+            if(e.getRecipe() == null || !TagUtil.hasCustomValueOf(e.getRecipe().getResult(), bloo.value())) return;
+
+            // getRecipe() still reflects the type-matched recipe even when our PrepareItemCraftEvent gate
+            // blanked the result to AIR for insufficient amounts - the actually-clicked item is what tells
+            // us whether a craft really happened, so bail out here instead of consuming anything.
+            if(e.getCurrentItem() == null || e.getCurrentItem().getType() == Material.AIR) return;
+
+            if(e.isShiftClick()) {
+                // Vanilla's own shift-click batch-craft only knows how to consume 1 of each ingredient per
+                // repeat, so it'd happily over-craft past what a >1 amount requirement should allow. Cancel
+                // it and redo the whole batch ourselves instead of trying to correct it after the fact.
+                e.setCancelled(true);
+
+                CraftingInventory shiftCraftingInventory = e.getInventory();
+                HumanEntity shiftWho = e.getWhoClicked();
+                ItemStack resultTemplate = e.getCurrentItem().clone();
+
+                // Deferred a tick, same reason as the non-shift path below: cancelling the event and then
+                // mutating the same inventories synchronously within that event's handling doesn't reliably
+                // stick (the client/server resync that follows a cancelled click can clobber it) - the item
+                // would disappear instead of landing in the player's inventory.
+                Bukkit.getScheduler().runTask(Main.getMain(), () ->
+                    craftShiftClickBatch(shiftCraftingInventory, shiftWho, resultTemplate, requiredAmountFor));
+                return;
+            }
+
+            // Deferred a tick so this runs after vanilla's own "take 1 per slot" has already happened -
+            // doing this synchronously inside the event races with that and consumes the wrong amount.
+            CraftingInventory craftingInventory = e.getInventory();
+            Bukkit.getScheduler().runTask(Main.getMain(), () -> {
+                ItemStack[] matrix = craftingInventory.getMatrix();
+                for (int i = 0; i < matrix.length; i++) {
+                    ItemStack slot = matrix[i];
+                    if(slot == null) continue;
+
+                    Integer required = requiredAmountFor.apply(i, slot);
+                    if(required == null || required <= 1) continue;
+
+                    int extra = required - 1;
+                    if(slot.getAmount() <= extra) {
+                        matrix[i] = null;
+                    } else {
+                        slot.setAmount(slot.getAmount() - extra);
+                    }
+                }
+                craftingInventory.setMatrix(matrix);
+            });
+        }), Main.getMain());
+    }
+
+    // Figures out the true number of times the recipe can be paid for (the minimum, across every occupied
+    // slot, of that slot's stock divided by its required amount), consumes exactly that much from each slot,
+    // and hands the player that many results - any overflow that doesn't fit in their inventory is dropped
+    // at their feet, same as vanilla does when a shift-click batch-craft can't all fit.
+    private static void craftShiftClickBatch(CraftingInventory craftingInventory, HumanEntity who, ItemStack resultTemplate, BiFunction<Integer, ItemStack, Integer> requiredAmountFor) {
+        ItemStack[] matrix = craftingInventory.getMatrix();
+
+        int maxRepeats = Integer.MAX_VALUE;
+        for (int i = 0; i < matrix.length; i++) {
+            ItemStack slot = matrix[i];
+            if(slot == null) continue;
+
+            int required = Objects.requireNonNullElse(requiredAmountFor.apply(i, slot), 1);
+            maxRepeats = Math.min(maxRepeats, slot.getAmount() / required);
+        }
+
+        if(maxRepeats <= 0) return;
+
+        for (int i = 0; i < matrix.length; i++) {
+            ItemStack slot = matrix[i];
+            if(slot == null) continue;
+
+            int required = Objects.requireNonNullElse(requiredAmountFor.apply(i, slot), 1);
+            int consumed = required * maxRepeats;
+            if(slot.getAmount() <= consumed) {
+                matrix[i] = null;
+            } else {
+                slot.setAmount(slot.getAmount() - consumed);
+            }
+        }
+        craftingInventory.setMatrix(matrix);
+
+        ItemStack result = resultTemplate.clone();
+        result.setAmount(result.getAmount() * maxRepeats);
+
+        for(ItemStack leftover : who.getInventory().addItem(result).values()) {
+            who.getWorld().dropItem(who.getLocation(), leftover);
         }
     }
 
