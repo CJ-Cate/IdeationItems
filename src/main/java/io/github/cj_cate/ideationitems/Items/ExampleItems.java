@@ -49,6 +49,7 @@ public class ExampleItems extends ItemClass
                 new MaterialCarrier(Material.FEATHER),
                 new MaterialCarrier(Material.BONE_MEAL)
             ),
+            null,
             new InteractEffect_PlayerInteractEntityEvent(e -> {
                 if(!TagUtil.hasCustomValueOf(e.getPlayer().getItemInUse(), custom_value)) {
                     return;
@@ -109,6 +110,7 @@ public class ExampleItems extends ItemClass
                     new MaterialCarrier('L', Material.LIGHTNING_ROD),
                     new MaterialCarrier('S', Material.STRING)
                 ),
+            null,
             new InteractEffect_EntityShootBowEvent(e -> {
                 if(!TagUtil.hasCustomValueOf(e.getBow(), custom_value)) {
                     return;
@@ -152,7 +154,7 @@ public class ExampleItems extends ItemClass
             new MaterialCarrier('i', Material.IRON_INGOT),
             new MaterialCarrier('r', Material.REDSTONE_BLOCK),
             new MaterialCarrier('s', Material.IRON_SHOVEL)),
-
+            null,
             new InteractEffect_PlayerMoveEvent(e -> {
                 if(e.getPlayer().getVehicle() == null) return;
 

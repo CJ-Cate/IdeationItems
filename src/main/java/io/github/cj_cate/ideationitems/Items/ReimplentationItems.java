@@ -50,7 +50,7 @@ public class ReimplentationItems extends ItemClass implements Listener
                 },
                 new MaterialCarrier('i', Material.IRON_NUGGET),
                 new MaterialCarrier('T', Material.IRON_INGOT)
-            ));
+            ), null);
     }
 
 

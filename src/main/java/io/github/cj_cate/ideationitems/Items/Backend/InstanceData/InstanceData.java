@@ -34,21 +34,23 @@ public class InstanceData {
     }
 
     // Reads each field's value off the old item's PDC and reapplies it onto the fresh meta, before the caller
-    // overwrites the rest. Fields the old item predates just keep the template default.
+    // overwrites the rest. If the old item predates this field ever being written to PDC (e.g. it predates
+    // InstanceData tracking it at all), falls back to the field's reader to capture whatever value is already
+    // live on the old meta, so wrapping an existing mutable property in InstanceData doesn't reset it to default.
     public void carryOver(ItemMeta oldMeta, ItemMeta newMeta) {
         PersistentDataContainer oldRoot = readRoot(oldMeta);
-        if (oldRoot == null) return;
 
         for (InstanceDataField<?> field : fields) {
-            carryOneField(field, oldRoot, newMeta);
+            carryOneField(field, oldRoot, oldMeta, newMeta);
         }
     }
 
-    private <T> void carryOneField(InstanceDataField<T> field, PersistentDataContainer oldRoot, ItemMeta newMeta) {
+    private <T> void carryOneField(InstanceDataField<T> field, PersistentDataContainer oldRoot, ItemMeta oldMeta, ItemMeta newMeta) {
         NamespacedKey key = new NamespacedKey(Main.getMain(), field.key());
-        if (!oldRoot.has(key, field.pdcType())) return;
+        T value = (oldRoot != null && oldRoot.has(key, field.pdcType()))
+                ? oldRoot.get(key, field.pdcType())
+                : field.readFrom(oldMeta);
 
-        T value = oldRoot.get(key, field.pdcType());
         field.applyTo(newMeta, value);
         writeToPdc(newMeta, field, value);
     }

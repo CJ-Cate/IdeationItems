@@ -128,7 +128,8 @@ public class TagUtil
     }
 
     public static boolean isDisabled(ItemStack item) {
-        return hasCustomValueOf(item, Tag.DISABLED.getTag());
+        if(item == null || item.getItemMeta() == null) return false;
+        return item.getItemMeta().getPersistentDataContainer().has(new NamespacedKey(Main.getMain(), Tag.DISABLED.getTag()), PersistentDataType.STRING);
     }
 
     public static ItemStack tagUnplaceable(ItemStack input) {
@@ -138,6 +139,11 @@ public class TagUtil
 
         input.setItemMeta(meta);
         return input;
+    }
+
+    public static boolean isUnplaceable(ItemStack item) {
+        if(item == null || item.getItemMeta() == null) return false;
+        return item.getItemMeta().getPersistentDataContainer().has(new NamespacedKey(Main.getMain(), Tag.UNPLACEABLE.getTag()), PersistentDataType.STRING);
     }
 
     // // Spawner mobs

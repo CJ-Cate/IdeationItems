@@ -1,11 +1,13 @@
 package io.github.cj_cate.ideationitems.Commands;
 
+import io.github.cj_cate.ideationitems.Main;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.meta.Damageable;
 
 import java.util.HashMap;
 import java.util.function.BiConsumer;
@@ -43,13 +45,16 @@ public class UtilCommands implements CommandExecutor
             }
             p.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "Changing gamemode to " + p.getGameMode());
         });
+        snippets.put("getdamage", (p, args) -> {
+            Main.debug("Damage: " + ((Damageable)p.getInventory().getItemInMainHand().getItemMeta()).getDamage());
+        });
 
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
-        if(!(sender instanceof Player p) || !p.hasPermission("ideation.utils")) return true;
+        if(!(sender instanceof Player p) || !p.hasPermission("ideation.util")) return true;
         snippets.get(command.getName()).accept(p, args);
         return true;
 

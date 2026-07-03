@@ -26,8 +26,6 @@ import static io.github.cj_cate.ideationitems.Utils.GuiUtil.createInventory;
  * The mall command serves two functions:
  *   1. Give the playerbase the ability to view all of the recipes that you have implemented
  *   2. Let admins cheat in items
- *
- *  If there is an item with no recipe, it
  */
 
 public class MallCommand implements Listener, CommandExecutor
@@ -36,11 +34,10 @@ public class MallCommand implements Listener, CommandExecutor
 //    public String getMallName() { return mallName; }
     private final int slots_per_page = 45;
     private final int page_max = (int) Math.ceil((double) ItemMaps.getBlueprints().size() / slots_per_page);
-    private final ItemStack air = new ItemStack(Material.AIR);
     private final Blueprint[][] book = new Blueprint[page_max][slots_per_page];
     // It gets kinda angry if we just put air in it, this is the workaround. We reset it to air later.
     private final Blueprint bair = new Blueprint(ItemUtil.makeItem(Material.LIGHT_GRAY_STAINED_GLASS_PANE, ""),
-                                            "air", Categories.SECRET, null);
+                                            "air", Categories.SECRET, null, null);
 
     // This is a little bit extra but works flawlessly
     private final HashMap<Player, Integer> page = new HashMap<>();
@@ -70,7 +67,7 @@ public class MallCommand implements Listener, CommandExecutor
             index = slots_per_page*i + j;
         }
 
-        // Fill the last page with bair. We only have to check the last page because every other page is full.
+        // Fill the last page empty slots with bair. We only have to check the last page because every other page is full.
         for (int k = 0; k < slots_per_page; k++) {
             if(book[page_max - 1][k] == null) {
                 book[page_max - 1][k] = bair;
@@ -191,6 +188,7 @@ public class MallCommand implements Listener, CommandExecutor
     }
 
     private void refreshMall(Inventory inv, Player player) {
+        final ItemStack air = new ItemStack(Material.AIR);
         int player_page = getPage(player);
         for (int i = 0; i < slots_per_page; i++) {
             if(book[player_page][i].equals(bair)) {

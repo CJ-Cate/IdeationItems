@@ -2,6 +2,7 @@ package io.github.cj_cate.ideationitems;
 
 import io.github.cj_cate.ideationitems.Commands.*;
 import io.github.cj_cate.ideationitems.Events.CraftingTableEvents;
+import io.github.cj_cate.ideationitems.Events.DisableDurabilityEvents;
 import io.github.cj_cate.ideationitems.Events.DisabledItemEvents;
 import io.github.cj_cate.ideationitems.Events.ModifyVanillaEvents;
 import io.github.cj_cate.ideationitems.Items.Backend.Blueprint;
@@ -15,6 +16,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ServiceLoader;
 import java.util.function.Predicate;
 
 public final class Main extends JavaPlugin {
@@ -113,6 +115,7 @@ public final class Main extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new ModifyVanillaEvents(), this);
         Bukkit.getPluginManager().registerEvents(new DisabledItemEvents(), this);
         Bukkit.getPluginManager().registerEvents(new CraftingTableEvents(), this);
+        Bukkit.getPluginManager().registerEvents(new DisableDurabilityEvents(), this);
 
 
         MallCommand mallCommand = new MallCommand();
@@ -142,6 +145,7 @@ public final class Main extends JavaPlugin {
         getCommand("gma").setExecutor(utilCommands);
         getCommand("gmsp").setExecutor(utilCommands);
         getCommand("gm").setExecutor(utilCommands);
+        getCommand("getdamage").setExecutor(utilCommands);
 
         DebugCommands debugCommands = new DebugCommands();
         getCommand("p").setExecutor(debugCommands);
@@ -157,6 +161,14 @@ public final class Main extends JavaPlugin {
         getCommand("hashcode").setExecutor(new HashcodeCommand());
         // Get the recipe for an item without going through the mall
         getCommand("getrecipe").setExecutor(getRecipeCommand);
+
+        // //
+        // // Extension point for downstream plugins that reuse this class as their plugin.yml main
+        // // (see PluginExtension.java / CLAUDE.md). Runs after all core registration is done.
+        // //
+        for (PluginExtension extension : ServiceLoader.load(PluginExtension.class, getClassLoader())) {
+            extension.onEnable(this);
+        }
 
     }
 

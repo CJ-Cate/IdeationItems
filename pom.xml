@@ -36,12 +36,34 @@
                 <version>3.2.4</version>
                 <executions>
                     <execution>
+                        <id>shade-deploy</id>
                         <phase>package</phase>
                         <goals>
                             <goal>shade</goal>
                         </goals>
                         <configuration>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
+                        </configuration>
+                    </execution>
+                    <!--
+                        The execution above becomes the project's main artifact, which the remap
+                        executions below then remap in place to Spigot's obfuscated internal names -
+                        required for the deployable server jar, but useless as a downstream Maven
+                        compile dependency (its NMS-touching classes reference names that don't exist
+                        in a mojang-mapped classpath, like IdeationItems-Helium's). This second
+                        execution attaches an unremapped, mojang-mapped copy under the "mojang"
+                        classifier instead, purpose-built for downstream projects to depend on.
+                    -->
+                    <execution>
+                        <id>shade-mojang</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <shadedArtifactAttached>true</shadedArtifactAttached>
+                            <shadedClassifierName>mojang</shadedClassifierName>
                         </configuration>
                     </execution>
                 </executions>

@@ -68,7 +68,7 @@ public class StartHere extends ItemClass
                 },
                 new MaterialCarrier('g', Material.SEAGRASS),
                 new MaterialCarrier('h', Material.LEATHER_HELMET)
-            ));
+            ), null);
     }
 
 

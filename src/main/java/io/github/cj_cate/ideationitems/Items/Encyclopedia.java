@@ -23,6 +23,7 @@ public class Encyclopedia extends ItemClass implements Listener {
                 new RecipeHolder(RecipeType.SHAPED_RECIPE,
                         new String[] {"bbb", "bbb", "bbb"},
                         new MaterialCarrier('b', Material.BOOK)),
+                null,
                 new InteractEffect_PlayerInteractEvent(e -> {
                     if(TagUtil.hasCustomValueOf(e.getItem(), custom_value)) {
                         e.setCancelled(true);

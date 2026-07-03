@@ -71,3 +71,7 @@ commands:
   getrecipe:
     usage: /getrecipe
     description: Get the custom recipe of an item, if it exists
+  getdamage:
+    usage: /getdamage
+    description: Prints the damage value of the item in your main hand.
+    permission: ideation.util

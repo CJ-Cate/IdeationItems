@@ -41,6 +41,7 @@ public class ExampleMobSpawning extends ItemClass
                     },
                     new MaterialCarrier('I', Material.IRON_BLOCK),
                     new MaterialCarrier('S', Material.SHIELD)),*/
+            null,
             new InteractEffect_PlayerToggleSneakEvent(e -> {
                 if(e.isSneaking() &&
                     e.getPlayer().isBlocking() &&

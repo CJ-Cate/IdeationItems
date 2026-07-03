@@ -76,8 +76,8 @@ public class InventoryRefresh implements CommandExecutor, Listener
 
                     ItemMeta new_meta;
                     if(DisableDurabilityEvents.durabilityIsOn == false ||
-                            !(updated_item instanceof Damageable) ||
-                            !(item instanceof Damageable)) {
+                            !(updated_item.getItemMeta() instanceof Damageable) ||
+                            !(item.getItemMeta() instanceof Damageable)) {
                         new_meta = updated_item.getItemMeta();
                     } else {
                         // only accessible if both items are damageable and durability is toggled on
@@ -141,7 +141,7 @@ public class InventoryRefresh implements CommandExecutor, Listener
 
             if(i.getItemMeta() instanceof Damageable d && DisableDurabilityEvents.durabilityIsOn_and_MaterialInList(i.getType()))
             {
-                if(d.getDamage() != i.getType().getMaxDurability())
+                if(d.getDamage() != 0)
                 {
                     d.setDamage(0);
                     ItemMeta meta = i.getItemMeta();

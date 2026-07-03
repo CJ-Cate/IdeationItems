@@ -26,7 +26,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * This record is used to store an ItemStack and its corresponding Key that will be used in the
+ * This class is used to store an ItemStack and its corresponding Key that will be used in the
  * ItemMaps.item_map Items that are added to the map should never be overwritten, or else existing items will break
  * .
  * Item: Passed in itemstack
@@ -39,25 +39,23 @@ import java.util.List;
 @SuppressWarnings("varargs")
 public class Blueprint
 {
-    private ItemStack item;
+    private final ItemStack item;
     public ItemStack item() { return item; }
-    private String value;
+
+    private final String value;
     public String value() { return value; }
-    private Categories category;
+
+    private final Categories category;
     public Categories category() { return category; }
-    private RecipeHolder recipe;
+
+    private final RecipeHolder recipe;
     public RecipeHolder recipe() { return recipe; }
-    private InteractEffectHolder[] consumers = null;
+
+    private final InteractEffectHolder[] consumers;
     public InteractEffectHolder[] consumers() { return consumers; }
 
-    private InstanceData instanceData;
+    private final InstanceData instanceData;
     public InstanceData instanceData() { return instanceData; }
-
-
-    // Existing signature kept as-is for every current call site; delegates with no instance data.
-    public Blueprint(ItemStack item, String value, Categories category, RecipeHolder recipe, InteractEffectHolder... consumers) {
-        this(item, value, category, recipe, null, consumers);
-    }
 
     public Blueprint(ItemStack item, String value, Categories category, RecipeHolder recipe, InstanceData instanceData, InteractEffectHolder... consumers) {
 
